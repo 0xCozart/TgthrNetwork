@@ -23,7 +23,7 @@ function useIDX(connect: boolean) {
     if (connect)
       (async () => {
         const didProvider: DIDProvider | undefined = await getDidProvider();
-        const ceramic = new Ceramic('https://ceramic-clay.3boxlabs.com');
+        const ceramic = new Ceramic('http://127.0.0.1:7007');
         console.log({ ceramic, didProvider });
         if (didProvider) await ceramic.setDIDProvider(didProvider);
 
