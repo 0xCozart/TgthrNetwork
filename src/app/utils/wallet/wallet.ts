@@ -1,5 +1,5 @@
 import { ThreeIdConnect, EthereumAuthProvider } from '3id-connect';
-import ethProvider from '../ethProvider/ethProvider';
+import ethProvider from './ethProvider/ethProvider';
 
 const threeIdConnect = new ThreeIdConnect();
 
