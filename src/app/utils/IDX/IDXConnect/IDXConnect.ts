@@ -31,12 +31,8 @@ async function IDXConnect(): Promise<null | IDX> {
   // sets ceramic client to users DID for authentication
   await ceramic.setDIDProvider(didProvider);
 
-  console.log({ didProvider, ceramic });
-
   // Retrieves users IDX
   const idx = new IDX({ ceramic });
-
-  console.log({ idx });
 
   if (!idx) throw new Error('User has not authenticated through IDX.');
   // if (!idx) return null;
