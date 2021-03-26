@@ -1,20 +1,21 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import IDXConnect from '../../utils/IDX/IDXConnect/IDXConnect';
-import { IDXState, AuthorizeIDXPayload } from './idx';
+import { IDXState, AuthorizeIDXPayload, IDXError } from './idx';
 
-const initialState = { isAuth: false, basicProfile: null, tgthr: null, error: null } as IDXState;
+const initialState: IDXState = { isAuth: false, basicProfile: null, tgthrProfile: null, error: null };
 
 const authorizeIDX = createAsyncThunk('idx/authorizeIDX', async (payload: AuthorizeIDXPayload, thunkAPI) => {
   try {
     if (payload.connect) {
       const idx = await IDXConnect();
-      const basicProfile = await idx?.get('basicProfile');
+      const basicProfile: any = await idx?.get('basicProfile');
+      const tgthrProfile: any = (await idx?.has('tghtr')) ? await idx?.get('tgthr') : null;
 
-      if (!basicProfile) return { basicProfile: false };
-      return basicProfile;
+      return { isAuth: true, basicProfile, tgthrProfile, error: null };
     }
+    return;
   } catch (err) {
-    return thunkAPI.rejectWithValue(err);
+    return thunkAPI.rejectWithValue(err.message as IDXError);
   }
 });
 
@@ -72,18 +73,30 @@ const idxSlice = createSlice({
     //   })();
     // }
   },
-  extraReducers: (builder) => {
-    builder.addCase(authorizeIDX.fulfilled, (state, action) => {
-      if (!action.payload) {
-        state = { isAuth: true, basicProfile: false, tgthr: null, error: null };
-        return;
-      }
+  extraReducers: {
+    [authorizeIDX.fulfilled.toString()]: (state, action) => {
+      // if (!payload) {
+      //   state = { isAuth: true, basicProfile: false, tgthr: null, error: null };
+      //   return;
+      // }
 
-      state = { isAuth: true, basicProfile: action.payload, tghr: null, error: null };
-    });
+      /* for some reason tgthrProfile isnt present in next store state */
+
+      state = { ...action.payload };
+      // state.isAuth = action.payload.isAuth;
+      // state.basicProfile = action.payload.basicProfile;
+      // state.tgthrProfile = action.payload.tgthr;
+      // state.error = action.payload.error;
+    },
+    //   state.isAuth = false;
+    //   state.error = payload;
+    // });}
+    [authorizeIDX.rejected.toString()]: (state, action) => {
+      state.error = action.payload;
+    }
   }
 });
 
-export const { idxAuth } = idxSlice.actions;
+export { authorizeIDX };
 
 export default idxSlice.reducer;
