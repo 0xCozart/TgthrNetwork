@@ -19,6 +19,11 @@ export const IDXPage = ({ history, location }: App.Props) => {
       <h1>HELLOOAk</h1>
       <div>PLEASeSAE</div>
       <button onClick={() => dispatch(authorizeIDX({ connect: true }))}> IDX </button>
+      <div>
+        {Object.keys(idx).map((key) => (
+          <div key={key}>{idx[key]}</div>
+        ))}
+      </div>
     </div>
   );
 };

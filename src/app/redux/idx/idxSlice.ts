@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import IDXConnect from '../../utils/IDX/IDXConnect/IDXConnect';
 import { IDXState, AuthorizeIDXPayload, IDXError } from './idx';
 
-const initialState: IDXState = { isAuth: false, basicProfile: null, tgthrProfile: null, error: null };
+const initialState: IDXState = { isAuth: false, basicProfile: null, tgthrProfile: null, loading: 'idle', error: null };
 
 const authorizeIDX = createAsyncThunk('idx/authorizeIDX', async (payload: AuthorizeIDXPayload, thunkAPI) => {
   try {
@@ -74,6 +74,11 @@ const idxSlice = createSlice({
     // }
   },
   extraReducers: {
+    [authorizeIDX.pending.toString()]: (state, action) => {
+      if (state.loading === 'idle') {
+        state.loading = 'pending';
+      }
+    },
     [authorizeIDX.fulfilled.toString()]: (state, action) => {
       // if (!payload) {
       //   state = { isAuth: true, basicProfile: false, tgthr: null, error: null };
@@ -82,11 +87,12 @@ const idxSlice = createSlice({
 
       /* for some reason tgthrProfile isnt present in next store state */
 
-      state = { ...action.payload };
-      // state.isAuth = action.payload.isAuth;
-      // state.basicProfile = action.payload.basicProfile;
-      // state.tgthrProfile = action.payload.tgthr;
-      // state.error = action.payload.error;
+      // state = { ...action.payload };
+      state.isAuth = action.payload.isAuth;
+      state.basicProfile = action.payload.basicProfile;
+      state.tgthrProfile = action.payload.tgthr;
+      state.error = action.payload.error;
+      state.error = 'idle';
     },
     //   state.isAuth = false;
     //   state.error = payload;

@@ -16,6 +16,7 @@ export interface IDXState {
   isAuth: boolean;
   basicProfile: any;
   tgthrProfile: any;
+  loading: 'idle' | 'pending';
   error: IDXError | null | unknown;
 }
 
