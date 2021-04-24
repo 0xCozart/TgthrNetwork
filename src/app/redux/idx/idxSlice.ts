@@ -10,6 +10,9 @@ const authorizeIDX = createAsyncThunk('idx/authorizeIDX', async (payload: Author
       const idx = await IDXConnect();
       const basicProfile: any = await idx?.get('basicProfile');
       const tgthrProfile: any = (await idx?.has('tghtr')) ? await idx?.get('tgthr') : null;
+      const keyChain: any = await idx?.get('3ID Keychain');
+
+      console.log(keyChain);
 
       return { isAuth: true, basicProfile, tgthrProfile, error: null };
     }
