@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { withFormik, FormikProps, FormikErrors, Form, Field } from 'formik';
+import { withFormik, FormikProps, Form, Field } from 'formik';
 import ipfsUpload from '../../utils/ipfs/ipfsUpload';
+import IDXConnect from 'app/utils/IDX/IDXConnect/IDXConnect';
 
 // Component will take in object
 // Object key will determine name : value will determine type of field
@@ -15,20 +16,16 @@ interface FormValues {
   profileBanner: string;
 }
 
-interface SubmitProps {
-  onSubmit: any;
-}
+const IdxBasicProfileInnerForm = (props: FormikProps<FormValues>) => {
+  const [profilePicture, setProfilePicture] = useState<string>('');
+  const [profileBanner, setProfileBanner] = useState<string>('');
 
-const IdxBasicProfileInnerForm = (props: SubmitProps & FormikProps<FormValues>) => {
-  const { profilePicture, setProfilePicture } = useState('');
-  const { profileBanner, setProfileBanner } = useState('');
-
-  const { touched, errors, isSubmitting } = props;
+  const { isSubmitting } = props;
 
   const onProfilePictureChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     try {
-      const ipfsDID = await ipfsUpload([event.target.files]);
+      const ipfsDID = await ipfsUpload(event.target.files);
       setProfilePicture(ipfsDID);
     } catch (err) {
       console.log(err);
@@ -38,7 +35,7 @@ const IdxBasicProfileInnerForm = (props: SubmitProps & FormikProps<FormValues>) 
   const onProfileBannerChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     try {
-      const ipfsDID = await ipfsUpload([event.target.files]);
+      const ipfsDID = await ipfsUpload(event.target.files);
       setProfileBanner(ipfsDID);
     } catch (err) {
       console.log(err);
@@ -53,18 +50,21 @@ const IdxBasicProfileInnerForm = (props: SubmitProps & FormikProps<FormValues>) 
       {/* {touched.description && errors.description && <div>{errors.description}</div>} */}
       <Field
         name="profilePicture"
-        as="input"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          onProfilePictureChange(e);
+        type="file"
+        onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+          await onProfilePictureChange(e);
         }}
+        value="profilePicture"
       />
       {/* {touched.profilePicture && errors.profilePicture && <div>{errors.profilePicture}</div>} */}
       <Field
         name="profileBanner"
         as="input"
+        type="file"
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           onProfileBannerChange(e);
         }}
+        value="profileBanner"
       />
       {/* {touched.profileBanner && errors.profileBanner && <div>{errors.profileBanner}</div>} */}
 
@@ -88,13 +88,28 @@ const IdxBasicProfileForm = withFormik({
 
   // Add a custom validation function (this can be async too!)
   validate: (values: FormValues) => {
-    let errors: FormikErrors<FormValues> = {};
-    return errors;
+    console.log(values);
+    // let errors: FormikErrors<FormValues> = {};
+    // return errors;
   },
 
-  handleSubmit: (values) => {
+  handleSubmit: async (values) => {
     // do submitting things
+    try {
+      const idx = await IDXConnect();
+      const basicProfile = idx?.get('basicProfile');
+      await idx?.set('basicProfile', {
+        name: values.name,
+        description: values.description,
+        // image: values.profilePicture,
+        // background: values.profileBanner,
+        ...basicProfile
+      });
+      console.log({ values });
+    } catch (err) {
+      console.log(err);
+    }
   }
-})(InnerForm);
+})(IdxBasicProfileInnerForm);
 
 export default IdxBasicProfileForm;

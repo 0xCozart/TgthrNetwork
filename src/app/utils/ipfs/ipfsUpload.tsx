@@ -1,16 +1,22 @@
-import IPFS from 'ipfs-core';
+import create from 'ipfs-http-client';
 
-export default async function ipfsUpload(file): Promise<string> {
+declare global {
+  interface Window {
+    ipfs: any;
+  }
+}
+
+export default async function ipfsUpload(file: any): Promise<string> {
   try {
     let ipfsClient;
-    if (globalThis.ipfs) {
-      ipfsClient = globalThis.ipfs;
+    if (window.ipfs) {
+      ipfsClient = window.ipfs;
     } else {
-      ipfsClient = await IPFS.create();
+      ipfsClient = create({ url: 'http://127.0.0.1:45005/' });
     }
 
     const { cid } = await ipfsClient.add(file);
-
+    console.log({ cid });
     return 'ipfs://' + cid;
   } catch (error) {
     console.log({ error });
