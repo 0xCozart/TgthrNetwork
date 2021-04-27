@@ -9,6 +9,7 @@
     <script>
       // webpack doesn't declare the global variable anymore, still uses "globalthis"
       // here we just declare it to what most modules refer to it as
+      crossOrigin='anonymous'
       global = globalThis //<- this should be enough
     </script>
   </body>

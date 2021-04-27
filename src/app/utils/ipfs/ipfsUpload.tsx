@@ -12,7 +12,8 @@ export default async function ipfsUpload(file: any): Promise<string> {
     if (window.ipfs) {
       ipfsClient = window.ipfs;
     } else {
-      ipfsClient = create({ url: 'http://127.0.0.1:45005/' });
+      ipfsClient = create({ url: 'http://127.0.0.1:45005/api/v0' });
+      console.log({ ipfsClient });
     }
 
     const { cid } = await ipfsClient.add(file);
