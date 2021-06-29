@@ -12,13 +12,13 @@ export default async function ipfsUpload(file: any): Promise<string> {
     if (window.ipfs) {
       ipfsClient = window.ipfs;
     } else {
-      ipfsClient = create({ url: 'http://127.0.0.1:45005/api/v0' });
+      ipfsClient = create({ url: '/ip4/127.0.0.1/tcp/5002/http' });
       console.log({ ipfsClient });
     }
 
     const { cid } = await ipfsClient.add(file);
     console.log({ cid });
-    return 'ipfs://' + cid;
+    return 'ipfs://' + cid.string;
   } catch (error) {
     console.log({ error });
     return error.message;
