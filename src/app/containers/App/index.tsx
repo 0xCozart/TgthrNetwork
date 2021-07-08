@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { authorizeIDX } from '../../redux/idx/idxSlice';
@@ -11,10 +11,18 @@ export namespace App {
   export interface Props extends RouteComponentProps<void> {}
 }
 
+const testData = 'BAKA CHWAUN';
+
 export const IDXPage = ({ history, location }: App.Props) => {
   const idx = useSelector((state: RootState) => state.idx);
   const dispatch: AppDispatch = useDispatch();
   console.log({ history, location, idx });
+
+  useEffect(() => {
+    (async () => {
+      ipfsUpload(testData);
+    })();
+  });
 
   return (
     <div>
