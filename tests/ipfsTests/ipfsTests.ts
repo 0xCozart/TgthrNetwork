@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import ipfsUpload from '../../src/app/utils/ipfs/ipfsUpload';
+import { ipfsUpload } from '../../src/app/utils/ipfs/ipfsUtils';
 
 const testData = { test: true, foo: 'panda' };
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { withFormik, FormikProps, Form, Field } from 'formik';
-import ipfsUpload from '../../utils/ipfs/ipfsUpload';
+import { ipfsUpload } from '../../utils/ipfs/ipfsUtils';
 import IDXConnect from 'app/utils/IDX/IDXConnect/IDXConnect';
 
 // Component will take in object
