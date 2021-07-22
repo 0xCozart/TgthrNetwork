@@ -11,7 +11,7 @@ export namespace App {
   export interface Props extends RouteComponentProps<void> {}
 }
 
-// const testData = 'BAKA CHWAUN';
+const testData = 'BAKA CHWAUN';
 
 export const IDXPage = ({ history, location }: App.Props) => {
   const idx = useSelector((state: RootState) => state.idx);
@@ -20,7 +20,7 @@ export const IDXPage = ({ history, location }: App.Props) => {
 
   useEffect(() => {
     (async () => {
-      ipfsGet('QmSmoLqPWLJMGiT4s2jEcqcbmrQkdLoMkc5u7oTLPoemXF');
+      ipfsUpload(testData);
     })();
   });
 
