@@ -1,49 +1,55 @@
-import create from 'ipfs-http-client';
-// import CID from 'ipfs-http-client';
-// const create = require('ipfs-http-client');
-// const { create, CID } = require('ipfs-http-client');
+import ipfsApi from './ipfs';
+
 declare global {
   interface Window {
     ipfs: any;
   }
 }
 
+async function ipfsGetImage(cid: string): Promise<string | null> {
+  try {
+    const api = await ipfsApi();
+    const res = await api.get(cid);
+    return 'https://ipfs.io/ipfs/' + res.cid.toString();
+  } catch (error) {
+    console.log(`error`, error);
+    return null;
+  }
+}
+
 async function ipfsGet(cid: string): Promise<any> {
   try {
-    let ipfsClient;
+    const api = await ipfsApi();
+    const files = await api.get(cid);
 
-    if (window !== undefined && window.ipfs) {
-      ipfsClient = window.ipfs;
-    } else {
-      ipfsClient = create({ url: '/ip4/127.0.0.1/tcp/5001' });
-      console.log('IPFS client initiated: ', ipfsClient);
+    for await (const file of files) {
+      console.log(file.type, file.path);
+      if (!file.content) continue;
+
+      const content = [];
+      for await (const chunk of file.content) {
+        content.push(chunk);
+      }
+      console.log(content.toString());
+      return content;
     }
-    const file = await ipfsClient.get(cid);
+
     // if (!file.content) throw new Error('CID did not point to a file!');
-    console.log({ file: file.content });
-    return file.content;
   } catch (error) {
-    console.error(error);
+    throw new Error(`Ipfs GET request failed:  ${error}`);
   }
 }
 
 async function ipfsUpload(file: any): Promise<string> {
   try {
-    let ipfsClient;
+    const api = await ipfsApi();
+    const res = await await api.add(file);
+    console.log(res.cid.toString());
 
-    if (window !== undefined && window.ipfs) {
-      ipfsClient = window.ipfs;
-    } else {
-      ipfsClient = create({ url: '/ip4/127.0.0.1/tcp/5001' });
-      console.log('IPFS client initiated: ', ipfsClient);
-    }
-    const { cid } = await await ipfsClient.add(file);
-    console.log({ cid });
-    return 'ipfs://' + cid.toString;
+    return res.cid.toString();
   } catch (error) {
-    console.error({ error });
-    return error.message;
+    throw new Error(`Ipfs POST request failed: ${error}`);
   }
 }
 
-export { ipfsUpload, ipfsGet };
+export { ipfsUpload, ipfsGet, ipfsGetImage };

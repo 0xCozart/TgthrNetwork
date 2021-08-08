@@ -29,10 +29,10 @@ const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) =>
 
   const onProfilePictureChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
-    const image = Array.from(event.target.files);
+    const image = event.target.files[0];
 
     try {
-      const ipfsDID = await onUpload(image[0]);
+      const ipfsDID = await onUpload(image);
       setProfilePicture(ipfsDID);
     } catch (err) {
       console.log(err);
@@ -42,7 +42,8 @@ const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) =>
   const onProfileBannerChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     try {
-      const ipfsDID = await onUpload(event.target.files);
+      const ipfsDID = await onUpload(event.target.files[0]);
+
       setProfileBanner(ipfsDID);
     } catch (err) {
       console.log(err);
@@ -62,7 +63,7 @@ const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) =>
           await onProfilePictureChange(e);
         }}
         accept="image/png, image/jpeg"
-        value={profilePicture}
+        // value={profilePicture}
       />
       {/* {touched.profilePicture && errors.profilePicture && <div>{errors.profilePicture}</div>} */}
       <input
@@ -73,7 +74,7 @@ const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) =>
           onProfileBannerChange(e);
         }}
         accept="image/png, image/jpeg"
-        value={profileBanner}
+        // value={profileBanner}
       />
       {/* {touched.profileBanner && errors.profileBanner && <div>{errors.profileBanner}</div>} */}
 
