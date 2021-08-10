@@ -6,15 +6,23 @@ declare global {
   }
 }
 
-async function ipfsGetImage(cid: string): Promise<string | null> {
-  try {
-    const api = await ipfsApi();
-    const res = await api.get(cid);
-    return 'https://ipfs.io/ipfs/' + res.cid.toString();
-  } catch (error) {
-    console.log(`error`, error);
+async function ipfsGetImage(cid: string) {
+  if (cid == '' || cid == null || cid == undefined) {
     return null;
   }
+
+  const api = await ipfsApi();
+
+  for await (const file of api.get(cid)) {
+    const content = [];
+    if (file.content) {
+      for await (const chunk of file.content) {
+        content.push(chunk);
+      }
+      return URL.createObjectURL(new Blob(content, { type: file.type }));
+    }
+  }
+  return null;
 }
 
 async function ipfsGet(cid: string): Promise<any> {
