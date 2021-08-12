@@ -79,6 +79,7 @@
     "authereum": "^0.1.14",
     "cids": "^1.0.2",
     "classnames": "^2.2.6",
+    "evergreen-ui": "^6.3.0",
     "formik": "^2.2.6",
     "fortmatic": "^2.2.1",
     "ipfs-http-client": "^49.0.4",

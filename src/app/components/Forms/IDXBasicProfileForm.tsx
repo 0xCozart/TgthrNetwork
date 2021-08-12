@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import { withFormik, FormikProps, Form, Field } from 'formik';
 import { ipfsUpload } from '../../utils/ipfs/ipfsUtils';
 import IDXConnect from 'app/utils/IDX/IDXConnect/IDXConnect';
+import { Button } from 'evergreen-ui';
+import { RootState } from 'app/redux/rootReducer';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 // Component will take in object
 // Object key will determine name : value will determine type of field
@@ -18,10 +22,13 @@ interface FormValues {
 
 interface FormProps {
   onUpload: typeof ipfsUpload;
+  onRetrieve: (data: object) => void;
   isAuth: boolean;
 }
 
 const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) => {
+  const dispatch = useDispatch();
+  const basicProfile = useSelector((state: RootState) => state.idx.basicProfile);
   const [profilePicture, setProfilePicture] = useState<string>('');
   const [profileBanner, setProfileBanner] = useState<string>('');
 
@@ -48,6 +55,18 @@ const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) =>
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const onSubmit = async (values: FormValues) => {
+    if (isSubmitting) return;
+    const { name, description, profilePicture, profileBanner } = values;
+    const basicProfile = {
+      name,
+      description,
+      profilePicture,
+      profileBanner
+    };
+    dispatch({ type: 'UPDATE_BASIC_PROFILE', basicProfile });
   };
 
   return (
@@ -78,9 +97,9 @@ const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) =>
       />
       {/* {touched.profileBanner && errors.profileBanner && <div>{errors.profileBanner}</div>} */}
 
-      <button type="submit" disabled={isSubmitting}>
+      <Button type="submit" disabled={isSubmitting} appearance="primary">
         Submit
-      </button>
+      </Button>
     </Form>
   );
 };
@@ -108,16 +127,19 @@ const IdxBasicProfileForm = withFormik<FormProps, FormValues>({
       // do submitting things
       try {
         const idx = await IDXConnect();
-        const basicProfile = idx?.get('basicProfile');
-        await idx?.set('basicProfile', {
+        await idx?.merge('basicProfile', {
           name: values.name,
-          description: values.description,
+          description: values.description
           // image: values.profilePicture,
           // background: values.profileBanner,
-          ...basicProfile
         });
         console.log('Submitting...');
         console.log({ values });
+
+        const basicProfile = await idx?.get('basicProfile');
+        if (basicProfile) props.onRetrieve(basicProfile as object);
+
+        console.log('Submitted!');
       } catch (err) {
         console.log(err);
       }

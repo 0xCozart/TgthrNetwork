@@ -1,10 +1,9 @@
 import { ThreeIdConnect, EthereumAuthProvider } from '3id-connect';
 import ethProvider from './ethProvider/ethProvider';
 
-const threeIdConnect = new ThreeIdConnect();
-
 // Returns authorized did from user ethereum portal
 export default async function getDidProvider() {
+  const threeIdConnect = new ThreeIdConnect();
   const provider = await ethProvider.connect();
   // await provider.on("connect", () => {
 
@@ -13,7 +12,7 @@ export default async function getDidProvider() {
 
   if (!provider) {
     console.log({ provider });
-    return;
+    return null;
   }
 
   await provider.enable();
@@ -22,6 +21,5 @@ export default async function getDidProvider() {
   await threeIdConnect.connect(authProvider);
 
   // console.log({ didProvider, threeIdConnect, provider });
-
-  return threeIdConnect.getDidProvider();
+  return await threeIdConnect.getDidProvider();
 }

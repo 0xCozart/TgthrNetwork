@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authorizeIDX } from 'app/redux/idx/idxSlice';
 import { RootState } from 'app/redux/rootReducer';
 import { AppDispatch } from 'app/redux/store';
-import IdxBasicProfileForm from 'app/components/Form/Form';
+import IdxBasicProfileForm from 'app/components/Forms/IDXBasicProfileForm';
 import { ipfsGet, ipfsUpload, ipfsGetImage } from 'app/utils/ipfs/ipfsUtils';
 
 export namespace App {
@@ -29,7 +29,7 @@ export const IDXPage = ({ history, location }: App.Props) => {
       <h1>HELLOOAk</h1>
       <div>PLEASeSAE</div>
       <button onClick={() => dispatch(authorizeIDX({ connect: true }))}> IDX </button>
-      <IdxBasicProfileForm onUpload={ipfsUpload} isAuth={idx.isAuth} />
+      <IdxBasicProfileForm onUpload={ipfsUpload} isAuth={idx.isAuth} onRetrieve={} />
       <button
         onClick={async () => {
           const image = await ipfsGetImage('QmWWtSEjs3RUgMHtmwrTz3Cv7SBF9VXmmhFUVrX4Xdd68y');
