@@ -1,6 +1,9 @@
 import { IDX } from '@ceramicstudio/idx';
-import Ceramic from '@ceramicnetwork/http-client';
-import { DIDProvider } from '@ceramicnetwork/common';
+import CeramicClient from '@ceramicnetwork/http-client';
+import { CeramicApi } from '@ceramicnetwork/common/lib/ceramic-api';
+import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver';
+import KeyDidResolver from 'key-did-resolver';
+import { DID } from 'dids';
 import getDidProvider from '../../wallet/wallet';
 
 interface IDXFound {
@@ -22,21 +25,33 @@ async function IDXConnect(): Promise<null | IDX> {
     const { hasIDX, idxWindow } = await IDXWindow();
     if (hasIDX) return idxWindow;
 
-    // Gets DID provider from users blockchain wallet
-    const didProvider = await getDidProvider();
-    if (!didProvider) throw new Error('Ethereum Provider not available.');
-
     // establishes connection to ceramic node
-    const ceramic = new Ceramic('http://localhost:7007');
+    const ceramic: CeramicClient = new CeramicClient('https://ceramic-clay.3boxlabs.com');
     if (!ceramic) throw new Error('Could not connect to Ceramic node.');
+
+    // Gets DID provider from users ethereum wallet
+    const didProvider = await getDidProvider();
+    if (!didProvider) {
+      console.error('Ethereum Provider not available.');
+      return null;
+    }
+    // await ceramic.did?.setProvider(didProvider);
+    // await ceramic.did?.authenticate();
+
+    const resolver = {
+      ...KeyDidResolver.getResolver(),
+      ...ThreeIdResolver.getResolver(ceramic)
+    };
+    const did = new DID({ provider: didProvider, resolver });
+
     // sets ceramic client to users DID for authentication
-    await ceramic.setDIDProvider(didProvider);
+    await ceramic.setDID(did);
+    await ceramic.did?.authenticate();
 
     // Retrieves users IDX
-    const idx = new IDX({ ceramic });
+    window.idx = new IDX({ ceramic: ceramic });
 
-    window.idx = idx;
-    return idx;
+    return window.idx;
   } catch (error) {
     console.error(error);
     return null;

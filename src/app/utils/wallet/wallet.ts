@@ -5,10 +5,6 @@ import ethProvider from './ethProvider/ethProvider';
 export default async function getDidProvider() {
   const threeIdConnect = new ThreeIdConnect();
   const provider = await ethProvider.connect();
-  // await provider.on("connect", () => {
-
-  // })
-  console.log({ provider, threeIdConnect });
 
   if (!provider) {
     console.log({ provider });

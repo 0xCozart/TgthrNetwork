@@ -67,12 +67,12 @@ const idxSlice = createSlice({
     //   })();
     // },
     // idxSetTgthrPofile: (state, action) => {
-    //   // Sets basic profile info and sets it again to idx store
+    //   // Sets basic profile info and sets it again to idx
     //   (async () => {
     //     const idx = await IDXConnect();
     //     await idx?.set('tgthrProfile', { ...state.basicProfile, ...action.payload });
     //     const tgthrProfile = await idx?.get('tgthrProfile');
-    //     state = { isAuth: true, basicProfile: state.basicProfile, tgthrProfile };
+    //     state = { isAuth: true, basicProfile: state.basicProfile, tgthrProfile, ... };
     //   })();
     // }
   },
@@ -95,7 +95,7 @@ const idxSlice = createSlice({
       state.basicProfile = action.payload.basicProfile;
       state.tgthrProfile = action.payload.tgthr;
       state.error = action.payload.error;
-      state.error = 'idle';
+      // state.error = 'idle';
     },
     //   state.isAuth = false;
     //   state.error = payload;

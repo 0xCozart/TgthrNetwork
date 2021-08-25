@@ -51,7 +51,7 @@ async function ipfsGet(cid: string): Promise<any> {
 async function ipfsUpload(file: any): Promise<string> {
   try {
     const api = await ipfsApi();
-    const res = await await api.add(file);
+    const res = await await api.pin(file);
     console.log(res.cid.toString());
 
     return res.cid.toString();

@@ -27,8 +27,6 @@ interface FormProps {
 }
 
 const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) => {
-  const dispatch = useDispatch();
-  const basicProfile = useSelector((state: RootState) => state.idx.basicProfile);
   const [profilePicture, setProfilePicture] = useState<string>('');
   const [profileBanner, setProfileBanner] = useState<string>('');
 
@@ -55,18 +53,6 @@ const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) =>
     } catch (err) {
       console.log(err);
     }
-  };
-
-  const onSubmit = async (values: FormValues) => {
-    if (isSubmitting) return;
-    const { name, description, profilePicture, profileBanner } = values;
-    const basicProfile = {
-      name,
-      description,
-      profilePicture,
-      profileBanner
-    };
-    dispatch({ type: 'UPDATE_BASIC_PROFILE', basicProfile });
   };
 
   return (
@@ -106,14 +92,14 @@ const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) =>
 
 const IdxBasicProfileForm = withFormik<FormProps, FormValues>({
   // Transform outer props into form values
-  mapPropsToValues: (props) => {
-    return {
-      name: '',
-      description: '',
-      profilePicture: '',
-      profileBanner: ''
-    };
-  },
+  // mapPropsToValues: (props) => {
+  //   return {
+  //     name: '',
+  //     description: ,
+  //     profilePicture: '',
+  //     profileBanner: ''
+  //   };
+  // },
 
   // Add a custom validation function (this can be async too!)
   validate: (values: FormValues) => {
@@ -123,6 +109,7 @@ const IdxBasicProfileForm = withFormik<FormProps, FormValues>({
   },
 
   handleSubmit: async (values, { props }) => {
+    console.log({ check: 'check' });
     if (props.isAuth)
       // do submitting things
       try {
@@ -131,14 +118,14 @@ const IdxBasicProfileForm = withFormik<FormProps, FormValues>({
           name: values.name,
           description: values.description
           // image: values.profilePicture,
-          // background: values.profileBanner,
+          // background: values.profileBanner
         });
         console.log('Submitting...');
         console.log({ values });
 
         const basicProfile = await idx?.get('basicProfile');
         if (basicProfile) props.onRetrieve(basicProfile as object);
-
+        // Eslint-disable-next-line
         console.log('Submitted!');
       } catch (err) {
         console.log(err);

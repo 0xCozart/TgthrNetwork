@@ -24,12 +24,16 @@ export const IDXPage = ({ history, location }: App.Props) => {
     })();
   });
 
+  const onRetrieveBasicProfile = (basicProfile: typeof idx.basicProfile) => {
+    dispatch({ type: 'UPDATE_BASIC_PROFILE', basicProfile });
+  };
+
   return (
     <div>
-      <h1>HELLOOAk</h1>
+      <h1>{idx.basicProfile}</h1>
       <div>PLEASeSAE</div>
       <button onClick={() => dispatch(authorizeIDX({ connect: true }))}> IDX </button>
-      <IdxBasicProfileForm onUpload={ipfsUpload} isAuth={idx.isAuth} onRetrieve={} />
+      <IdxBasicProfileForm onUpload={ipfsUpload} isAuth={true} onRetrieve={onRetrieveBasicProfile} />
       <button
         onClick={async () => {
           const image = await ipfsGetImage('QmWWtSEjs3RUgMHtmwrTz3Cv7SBF9VXmmhFUVrX4Xdd68y');
