@@ -1,7 +1,7 @@
 import React, { useReducer, useState } from 'react';
 import { withFormik, FormikProps, Form, Field } from 'formik';
 import { ipfsUpload } from '../../utils/ipfs/ipfsUtils';
-import IDXConnect from 'app/utils/IDX/IDXConnect/IDXConnect';
+import { getCeramicIdx } from 'app/utils/IDX/IDXConnect/IDXConnect';
 import { Button } from 'evergreen-ui';
 import { RootState } from 'app/redux/rootReducer';
 import { useSelector } from 'react-redux';
@@ -113,13 +113,13 @@ const IdxBasicProfileForm = withFormik<FormProps, FormValues>({
     if (props.isAuth)
       // do submitting things
       try {
-        const idx = await IDXConnect();
-        await idx?.merge('basicProfile', {
-          name: values.name,
-          description: values.description
-          // image: values.profilePicture,
-          // background: values.profileBanner
-        });
+        const { ceramic, idx } = await getCeramicIdx();
+        // await idx?.merge('basicProfile', {
+        //   name: values.name,
+        //   description: values.description
+        //   // image: values.profilePicture,
+        //   // background: values.profileBanner
+        // });
         console.log('Submitting...');
         console.log({ values });
 

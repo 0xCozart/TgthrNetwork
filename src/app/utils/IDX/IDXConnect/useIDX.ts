@@ -8,6 +8,7 @@ import getDidProvider from '../../wallet/wallet';
 declare global {
   export interface Window {
     idx: IDX;
+    ceramic: Ceramic;
   }
 }
 

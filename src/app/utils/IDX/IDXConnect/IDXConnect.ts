@@ -1,61 +1,72 @@
-import { IDX } from '@ceramicstudio/idx';
+import getDidProvider from '../../wallet/wallet';
 import CeramicClient from '@ceramicnetwork/http-client';
-import { CeramicApi } from '@ceramicnetwork/common/lib/ceramic-api';
 import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver';
 import KeyDidResolver from 'key-did-resolver';
+import { IDX } from '@ceramicstudio/idx';
 import { DID } from 'dids';
-import getDidProvider from '../../wallet/wallet';
+import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect';
+import ethProvider from 'app/utils/wallet/ethProvider/ethProvider';
 
-interface IDXFound {
-  hasIDX: boolean;
-  idxWindow: IDX | null;
+interface CeramicIDX {
+  ceramic: CeramicClient | null;
+  idx: IDX | null;
 }
 
-async function IDXWindow(): Promise<IDXFound> {
-  if (window.idx) {
-    console.log({ idx: window.idx });
-    return { hasIDX: true, idxWindow: window.idx };
+async function IDXWindow(): Promise<CeramicIDX> {
+  if (window.idx && window.ceramic) {
+    // console.log({ idx: window.idx });
+    return { ceramic: window.ceramic, idx: window.idx };
   } else {
-    return { hasIDX: false, idxWindow: null };
+    return { ceramic: null, idx: null };
   }
 }
-
-async function IDXConnect(): Promise<null | IDX> {
+export async function getCeramicIdx(): Promise<CeramicIDX> {
   try {
-    const { hasIDX, idxWindow } = await IDXWindow();
-    if (hasIDX) return idxWindow;
-
-    // establishes connection to ceramic node
-    const ceramic: CeramicClient = new CeramicClient('https://ceramic-clay.3boxlabs.com');
-    if (!ceramic) throw new Error('Could not connect to Ceramic node.');
-
-    // Gets DID provider from users ethereum wallet
-    const didProvider = await getDidProvider();
-    if (!didProvider) {
-      console.error('Ethereum Provider not available.');
-      return null;
+    // Checks if IDX is already loaded
+    const { ceramic, idx } = await IDXWindow();
+    if (ceramic && idx) {
+      return { ceramic, idx };
     }
-    // await ceramic.did?.setProvider(didProvider);
-    // await ceramic.did?.authenticate();
 
-    const resolver = {
-      ...KeyDidResolver.getResolver(),
-      ...ThreeIdResolver.getResolver(ceramic)
-    };
-    const did = new DID({ provider: didProvider, resolver });
+    /* 
+    If not, load it will connect to the IDX provider through etheruem wallet provider and 3id provider and return the IDX window 
+    */
 
-    // sets ceramic client to users DID for authentication
-    await ceramic.setDID(did);
-    await ceramic.did?.authenticate();
+    // Get the wallet provider through ethProvider, opens multi wallet iFrame and returns the provider
+    const [address] = await ethProvider.request({ method: 'eth_requestAccounts' });
+    const EthProvider = await ethProvider.connect();
 
-    // Retrieves users IDX
-    window.idx = new IDX({ ceramic: ceramic });
+    // Get the 3id provider
+    const threeIdConnect = new ThreeIdConnect();
+    const authProvider = new EthereumAuthProvider(EthProvider, address);
+    await threeIdConnect.connect(authProvider);
+    const didProvider = await threeIdConnect.getDidProvider();
 
-    return window.idx;
+    // Get the ceramic provider (currently this gateway is the only supporter for 3IDs)
+    const ceramicClient = new CeramicClient('127.0.0.1:7007');
+    //https://gateway-clay.ceramic.network
+    // Get the 3id resolver and key resolver and add them to the ceramic provider (will integrate key resolver later)
+    const did = new DID({
+      resolver: { ...KeyDidResolver.getResolver(), ...ThreeIdResolver.getResolver(ceramicClient) }
+    });
+
+    // Set DID and provider to ceramic client + authentication to write to the ceramic network
+    ceramicClient.did = did;
+    ceramicClient.did.setProvider(didProvider);
+    await ceramicClient.did.authenticate();
+
+    // Create an authenticated IDX object
+    const idxClient = new IDX({ ceramic: ceramicClient });
+
+    // Set idx and ceramic to window
+    if (idx && ceramic) {
+      window.idx = idxClient;
+      window.ceramic = ceramicClient;
+    }
+
+    return { ceramic: window.ceramic, idx: window.idx };
   } catch (error) {
-    console.error(error);
-    return null;
+    console.log('getIDX error: ', error);
+    return { ceramic: null, idx: null };
   }
 }
-
-export default IDXConnect;

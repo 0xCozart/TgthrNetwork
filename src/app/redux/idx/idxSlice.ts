@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import IDXConnect from '../../utils/IDX/IDXConnect/IDXConnect';
+import { getCeramicIdx } from '../../utils/IDX/IDXConnect/IDXConnect';
 import { IDXState, AuthorizeIDXPayload, IDXError } from './idx';
 
 const initialState: IDXState = { isAuth: false, basicProfile: null, tgthrProfile: null, loading: 'idle', error: null };
@@ -7,12 +7,13 @@ const initialState: IDXState = { isAuth: false, basicProfile: null, tgthrProfile
 const authorizeIDX = createAsyncThunk('idx/authorizeIDX', async (payload: AuthorizeIDXPayload, thunkAPI) => {
   try {
     if (payload.connect) {
-      const idx = await IDXConnect();
+      // TS-ignore
+      const { ceramic, idx } = await getCeramicIdx();
       const basicProfile: any = await idx?.get('basicProfile');
       const tgthrProfile: any = (await idx?.has('tghtr')) ? await idx?.get('tgthr') : null;
       const keyChain: any = await idx?.get('3ID Keychain');
 
-      console.log(keyChain);
+      console.log({ idx, basicProfile });
 
       return { isAuth: true, basicProfile, tgthrProfile, error: null };
     }
