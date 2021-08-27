@@ -2,13 +2,14 @@ import { useEffect } from 'react';
 import Ceramic from '@ceramicnetwork/http-client';
 import { IDX } from '@ceramicstudio/idx';
 import { DIDProvider } from '@ceramicnetwork/common';
-import getDidProvider from '../../wallet/wallet';
+import getDidProvider from '../../wallet/ethProvider';
 // import { CERAMIC_URL } from '../constant/constants';
 
 declare global {
   export interface Window {
     idx: IDX;
     ceramic: Ceramic;
+    ethereum: any;
   }
 }
 

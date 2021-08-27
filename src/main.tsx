@@ -6,6 +6,16 @@ import { store, persistor } from './app/redux/store';
 import { createBrowserHistory } from 'history';
 import { Router } from 'react-router';
 import { App } from './app';
+import { IDX } from '@ceramicstudio/idx';
+import Ceramic from '@ceramicnetwork/http-client';
+
+declare global {
+  export interface Window {
+    idx: IDX;
+    ceramic: Ceramic;
+    ethereum: any;
+  }
+}
 
 // prepare store
 const history = createBrowserHistory();

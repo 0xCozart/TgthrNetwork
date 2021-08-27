@@ -1,29 +1,17 @@
-import getDidProvider from '../../wallet/wallet';
-import CeramicClient from '@ceramicnetwork/http-client';
+import Ceramic from '@ceramicnetwork/http-client';
 import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver';
 import KeyDidResolver from 'key-did-resolver';
 import { IDX } from '@ceramicstudio/idx';
 import { DID } from 'dids';
 import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect';
-import ethProvider from 'app/utils/wallet/ethProvider/ethProvider';
+import getEthProvider from 'app/utils/wallet/ethProvider';
+import { ceramicIdxWindow } from '../IDXutils';
+import { CeramicIDX } from '../idx';
 
-interface CeramicIDX {
-  ceramic: CeramicClient | null;
-  idx: IDX | null;
-}
-
-async function IDXWindow(): Promise<CeramicIDX> {
-  if (window.idx && window.ceramic) {
-    // console.log({ idx: window.idx });
-    return { ceramic: window.ceramic, idx: window.idx };
-  } else {
-    return { ceramic: null, idx: null };
-  }
-}
 export async function getCeramicIdx(): Promise<CeramicIDX> {
   try {
     // Checks if IDX is already loaded
-    const { ceramic, idx } = await IDXWindow();
+    const { ceramic, idx } = await ceramicIdxWindow();
     if (ceramic && idx) {
       return { ceramic, idx };
     }
@@ -31,19 +19,19 @@ export async function getCeramicIdx(): Promise<CeramicIDX> {
     /* 
     If not, load it will connect to the IDX provider through etheruem wallet provider and 3id provider and return the IDX window 
     */
-
-    // Get the wallet provider through ethProvider, opens multi wallet iFrame and returns the provider
-    const [address] = await ethProvider.request({ method: 'eth_requestAccounts' });
-    const EthProvider = await ethProvider.connect();
+    const { addresses, ethProvider } = await getEthProvider();
+    if (!addresses || !ethProvider) {
+      throw new Error('Please install Metamask to connect to the Ethereum Network');
+    }
 
     // Get the 3id provider
     const threeIdConnect = new ThreeIdConnect();
-    const authProvider = new EthereumAuthProvider(EthProvider, address);
+    const authProvider = new EthereumAuthProvider(ethProvider, addresses[0]);
     await threeIdConnect.connect(authProvider);
     const didProvider = await threeIdConnect.getDidProvider();
 
     // Get the ceramic provider (currently this gateway is the only supporter for 3IDs)
-    const ceramicClient = new CeramicClient('127.0.0.1:7007');
+    const ceramicClient = new Ceramic('127.0.0.1:7007');
     //https://gateway-clay.ceramic.network
     // Get the 3id resolver and key resolver and add them to the ceramic provider (will integrate key resolver later)
     const did = new DID({
