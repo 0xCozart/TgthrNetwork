@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import Ceramic from '@ceramicnetwork/http-client';
 import { IDX } from '@ceramicstudio/idx';
 import { DIDProvider } from '@ceramicnetwork/common';
-import getDidProvider from '../../wallet/ethProvider';
+import getDidProvider from '../../wallet/getEthProvider';
 // import { CERAMIC_URL } from '../constant/constants';
 
 declare global {

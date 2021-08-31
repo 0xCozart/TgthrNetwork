@@ -5,6 +5,7 @@ declare module 'fortmatic';
 declare module 'web3modal';
 declare module 'react-redux';
 declare module '3id-connect';
+declare module 'react-router-dom';
 
 // for style loader
 declare module '*.css' {

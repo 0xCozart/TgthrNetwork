@@ -6,18 +6,15 @@ const initialState: IDXState = { isAuth: false, basicProfile: null, tgthrProfile
 
 const authorizeIDX = createAsyncThunk('idx/authorizeIDX', async (payload: AuthorizeIDXPayload, thunkAPI) => {
   try {
-    if (payload.connect) {
-      // TS-ignore
-      const { ceramic, idx } = await getCeramicIdx();
-      const basicProfile: any = await idx?.get('basicProfile');
-      const tgthrProfile: any = (await idx?.has('tghtr')) ? await idx?.get('tgthr') : null;
-      const keyChain: any = await idx?.get('3ID Keychain');
+    const { ceramic, idx } = await getCeramicIdx();
+    const basicProfile: any = await idx!.get('basicProfile');
+    // const tgthrProfile: any = (await idx?.has('tghtr')) ? await idx?.get('tgthr') : null;
+    // const keyChain: any = await idx?.get('3ID Keychain');
+    const tgthrProfile: any = null;
 
-      console.log({ idx, basicProfile });
+    console.log({ idx, basicProfile, ceramic });
 
-      return { isAuth: true, basicProfile, tgthrProfile, error: null };
-    }
-    return;
+    return { isAuth: true, basicProfile, tgthrProfile, error: null };
   } catch (err) {
     return thunkAPI.rejectWithValue(err.message as IDXError);
   }
@@ -77,33 +74,26 @@ const idxSlice = createSlice({
     //   })();
     // }
   },
-  extraReducers: {
-    [authorizeIDX.pending.toString()]: (state, action) => {
-      if (state.loading === 'idle') {
-        state.loading = 'pending';
-      }
-    },
-    [authorizeIDX.fulfilled.toString()]: (state, action) => {
-      // if (!payload) {
-      //   state = { isAuth: true, basicProfile: false, tgthr: null, error: null };
-      //   return;
-      // }
+  extraReducers: (builder) => {
+    builder
 
-      /* for some reason tgthrProfile isnt present in next store state */
-
-      // state = { ...action.payload };
-      state.isAuth = action.payload.isAuth;
-      state.basicProfile = action.payload.basicProfile;
-      state.tgthrProfile = action.payload.tgthr;
-      state.error = action.payload.error;
-      // state.error = 'idle';
-    },
-    //   state.isAuth = false;
-    //   state.error = payload;
-    // });}
-    [authorizeIDX.rejected.toString()]: (state, action) => {
-      state.error = action.payload;
-    }
+      .addCase(authorizeIDX.pending, (state, action) => {
+        if (state.loading === 'idle') {
+          state.loading = 'pending';
+        }
+      })
+      .addCase(authorizeIDX.fulfilled, (state, action) => {
+        /* for some reason tgthrProfile isnt present in next store state */
+        if (action.payload) {
+          state.isAuth = action.payload.isAuth;
+          state.basicProfile = action.payload.basicProfile;
+          state.tgthrProfile = action.payload.tgthrProfile;
+          state.error = action.payload.error;
+        }
+      })
+      .addCase(authorizeIDX.rejected, (state, action) => {
+        state.error = action.payload;
+      });
   }
 });
 

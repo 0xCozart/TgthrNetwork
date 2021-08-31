@@ -4,7 +4,7 @@ import KeyDidResolver from 'key-did-resolver';
 import { IDX } from '@ceramicstudio/idx';
 import { DID } from 'dids';
 import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect';
-import getEthProvider from 'app/utils/wallet/ethProvider';
+import getEthProvider from 'app/utils/wallet/getEthProvider';
 import { ceramicIdxWindow } from '../IDXutils';
 import { CeramicIDX } from '../idx';
 
@@ -26,15 +26,16 @@ export async function getCeramicIdx(): Promise<CeramicIDX> {
 
     // Get the 3id provider
     const threeIdConnect = new ThreeIdConnect();
-    const authProvider = new EthereumAuthProvider(ethProvider, addresses[0]);
+    const authProvider = new EthereumAuthProvider(window.ethereum, addresses[0]);
     await threeIdConnect.connect(authProvider);
     const didProvider = await threeIdConnect.getDidProvider();
 
     // Get the ceramic provider (currently this gateway is the only supporter for 3IDs)
-    const ceramicClient = new Ceramic('127.0.0.1:7007');
+    const ceramicClient = new Ceramic('https://gateway-clay.ceramic.network');
     //https://gateway-clay.ceramic.network
     // Get the 3id resolver and key resolver and add them to the ceramic provider (will integrate key resolver later)
     const did = new DID({
+      provider: didProvider,
       resolver: { ...KeyDidResolver.getResolver(), ...ThreeIdResolver.getResolver(ceramicClient) }
     });
 
@@ -47,12 +48,13 @@ export async function getCeramicIdx(): Promise<CeramicIDX> {
     const idxClient = new IDX({ ceramic: ceramicClient });
 
     // Set idx and ceramic to window
-    if (idx && ceramic) {
+    if (idxClient && ceramicClient) {
       window.idx = idxClient;
       window.ceramic = ceramicClient;
     }
+    console.log({ idxClient });
 
-    return { ceramic: window.ceramic, idx: window.idx };
+    return { ceramic: ceramicClient, idx: idxClient };
   } catch (error) {
     console.log('getIDX error: ', error);
     return { ceramic: null, idx: null };

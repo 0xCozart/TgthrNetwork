@@ -14,8 +14,8 @@ export interface AuthorizeIDXActionPayload {
 
 export interface IDXState {
   isAuth: boolean;
-  basicProfile: any;
-  tgthrProfile: any;
+  basicProfile: object | null;
+  tgthrProfile: object | null;
   loading: 'idle' | 'pending';
   error: IDXError | null | unknown;
 }

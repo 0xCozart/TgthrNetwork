@@ -2,7 +2,7 @@ import React, { useReducer, useState } from 'react';
 import { withFormik, FormikProps, Form, Field } from 'formik';
 import { ipfsUpload } from '../../utils/ipfs/ipfsUtils';
 import { getCeramicIdx } from 'app/utils/IDX/IDXConnect/IDXConnect';
-import { Button } from 'evergreen-ui';
+import { Button } from 'grommet';
 import { RootState } from 'app/redux/rootReducer';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
@@ -83,7 +83,7 @@ const IdxBasicProfileInnerForm = (props: FormProps & FormikProps<FormValues>) =>
       />
       {/* {touched.profileBanner && errors.profileBanner && <div>{errors.profileBanner}</div>} */}
 
-      <Button type="submit" disabled={isSubmitting} appearance="primary">
+      <Button type="submit" disabled={isSubmitting}>
         Submit
       </Button>
     </Form>
