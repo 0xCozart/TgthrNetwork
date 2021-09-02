@@ -52,7 +52,6 @@ export async function getCeramicIdx(): Promise<CeramicIDX> {
       window.idx = idxClient;
       window.ceramic = ceramicClient;
     }
-    console.log({ idxClient });
 
     return { ceramic: ceramicClient, idx: idxClient };
   } catch (error) {

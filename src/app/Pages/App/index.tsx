@@ -17,7 +17,6 @@ export const IDXPage = ({ history, location }: App.Props) => {
   const [testImage, setTestImage] = useState<string>('');
   const idx = useSelector((state: RootState) => state.idx);
   const dispatch: AppDispatch = useDispatch();
-  console.log({ history, location, idx });
 
   useEffect(() => {
     (async () => {

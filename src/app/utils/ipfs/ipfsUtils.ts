@@ -1,4 +1,5 @@
 import ipfsApi from './ipfs';
+import { getImageURL } from '../misc/imagesUtil';
 
 declare global {
   interface Window {
@@ -19,7 +20,7 @@ async function ipfsGetImage(cid: string) {
       for await (const chunk of file.content) {
         content.push(chunk);
       }
-      return URL.createObjectURL(new Blob(content, { type: file.type }));
+      return getImageURL(content);
     }
   }
   return null;

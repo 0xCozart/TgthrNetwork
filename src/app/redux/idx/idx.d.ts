@@ -6,15 +6,22 @@ export interface AuthorizeIDXPayload {
   connect: boolean;
 }
 
+export interface IDXBasicProfile {
+  name: string;
+  image: string;
+  description: string;
+  background: string;
+}
+
 export interface AuthorizeIDXActionPayload {
   connected: boolean;
-  basicProfile: object | boolean;
+  basicProfile: IDXBasicProfile | boolean;
   tgthr: object | boolean;
 }
 
 export interface IDXState {
   isAuth: boolean;
-  basicProfile: object | null;
+  basicProfile: IDXBasicProfile | null;
   tgthrProfile: object | null;
   loading: 'idle' | 'pending';
   error: IDXError | null | unknown;
