@@ -5,19 +5,18 @@ import { IDX } from '@ceramicstudio/idx';
 import { DID } from 'dids';
 import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect';
 import getEthProvider from 'app/utils/wallet/getEthProvider';
-import { ceramicIdxWindow } from '../IDXutils';
-import { CeramicIDX } from '../idx';
+import { idxWindow } from '../IDXutils';
 
-export async function getCeramicIdx(): Promise<CeramicIDX> {
+export async function getCeramicIdx(): Promise<IDX | null> {
   try {
     // Checks if IDX is already loaded
-    const { ceramic, idx } = await ceramicIdxWindow();
-    if (ceramic && idx) {
-      return { ceramic, idx };
+    const idx = await idxWindow();
+    if (idx) {
+      return idx;
     }
 
     /* 
-    If not, load it will connect to the IDX provider through etheruem wallet provider and 3id provider and return the IDX window 
+    If not in window, connect IDX provider through etheruem wallet provider + 3id provider  
     */
     const { addresses, ethProvider } = await getEthProvider();
     if (!addresses || !ethProvider) {
@@ -50,12 +49,12 @@ export async function getCeramicIdx(): Promise<CeramicIDX> {
     // Set idx and ceramic to window
     if (idxClient && ceramicClient) {
       window.idx = idxClient;
-      window.ceramic = ceramicClient;
     }
 
-    return { ceramic: ceramicClient, idx: idxClient };
+    // Don't need to export ceramic client since its accessible through idx via `idx.ceramic`
+    return idxClient;
   } catch (error) {
     console.log('getIDX error: ', error);
-    return { ceramic: null, idx: null };
+    return null;
   }
 }

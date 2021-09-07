@@ -1,10 +1,10 @@
-import { CeramicIDX } from './idx';
+import { IDX } from '@ceramicstudio/idx';
 
-export async function ceramicIdxWindow(): Promise<CeramicIDX> {
-  if (window.idx && window.ceramic) {
+export async function idxWindow(): Promise<IDX | null> {
+  if (window.idx) {
     // console.log({ idx: window.idx });
-    return { ceramic: window.ceramic, idx: window.idx };
+    return window.idx;
   } else {
-    return { ceramic: null, idx: null };
+    return null;
   }
 }
