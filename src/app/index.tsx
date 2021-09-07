@@ -1,9 +1,29 @@
 import React from 'react';
-import { Route, Switch } from 'react-router';
 import { IDXPage } from 'app/Pages/App';
+import IDXSignUp from 'app/Pages/SignUp';
+import { Header } from 'grommet';
+import { useSelector } from 'react-redux';
+import { RootState } from './redux/rootReducer';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Landing from './Pages/Landing/Landing';
 
-export const App = () => (
-  <Switch>
-    <Route path="/" component={IDXPage} />
-  </Switch>
-);
+export const App = () => {
+  const idx = useSelector((state: RootState) => state.idx);
+  if (!idx.isAuth) {
+  }
+
+  return (
+    <Router>
+      <Header />
+      <Switch>
+        {idx.isAuth ? (
+          <Route path="/signup">
+            <Landing />
+          </Route>
+        ) : (
+          <Route path="/" component={IDXSignUp} />
+        )}
+      </Switch>
+    </Router>
+  );
+};
