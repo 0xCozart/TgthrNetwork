@@ -40,7 +40,7 @@ const NonAuthedHeader = ({ handleOnClick }: UnauthedHeaderProps) => (
 const Header = () => {
   const dispatch: AppDispatch = useDispatch();
   const idx = useSelector((state: RootState) => state.idx);
-  const history = useHistory();
+  // const history = useHistory();
   const handleOnClick = () => {
     dispatch(authorizeIDX({ connect: true }));
   };

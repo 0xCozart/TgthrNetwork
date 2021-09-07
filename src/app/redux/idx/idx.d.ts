@@ -8,15 +8,20 @@ export interface AuthorizeIDXPayload {
 
 export interface IDXBasicProfile {
   name: string;
-  image: string;
   description: string;
+  image: string;
   background: string;
 }
 
 export interface AuthorizeIDXActionPayload {
   connected: boolean;
-  basicProfile: IDXBasicProfile | boolean;
-  tgthr: object | boolean;
+  // basicProfile: IDXBasicProfile | boolean;
+  // tgthr: object | boolean;
+}
+
+export interface IDXUpdateProfilePayload {
+  definition: 'basicProfile' | 'tgthr';
+  profile: IDXBasicProfile | any;
 }
 
 export interface IDXState {

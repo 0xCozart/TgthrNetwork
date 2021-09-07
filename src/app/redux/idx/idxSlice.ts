@@ -1,24 +1,51 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getCeramicIdx } from '../../utils/IDX/IDXConnect/IDXConnect';
-import { IDXState, AuthorizeIDXPayload, IDXError } from './idx';
+import { IDXState, AuthorizeIDXPayload, IDXError, IDXUpdateProfilePayload } from './idx';
 
-const initialState: IDXState = { isAuth: false, basicProfile: null, tgthrProfile: null, loading: 'idle', error: null };
+const initialState: IDXState = {
+  isAuth: false,
+  basicProfile: null,
+  tgthrProfile: null,
+  loading: 'idle',
+  error: null
+};
 
 const authorizeIDX = createAsyncThunk('idx/authorizeIDX', async (payload: AuthorizeIDXPayload, thunkAPI) => {
   try {
-    const { ceramic, idx } = await getCeramicIdx();
+    const idx = await getCeramicIdx();
     const basicProfile: any = await idx!.get('basicProfile');
-    // const tgthrProfile: any = (await idx?.has('tghtr')) ? await idx?.get('tgthr') : null;
+    const tgthrProfile: any = (await idx?.has('tghtr')) === true ? await idx?.get('tgthr') : null;
     // const keyChain: any = await idx?.get('3ID Keychain');
-    const tgthrProfile: any = null;
+    // const tgthrProfile: any = null;
 
-    console.log({ idx, basicProfile, ceramic });
+    console.log({ idx, basicProfile });
 
     return { isAuth: true, basicProfile, tgthrProfile, error: null };
   } catch (err) {
     return thunkAPI.rejectWithValue(err.message as IDXError);
   }
 });
+
+const updateIdxDefintion = createAsyncThunk(
+  'idx/updateIdxBasicProfile',
+  async (payload: IDXUpdateProfilePayload, thunkAPI) => {
+    {
+      try {
+        let basicProfile: any;
+        let tgthr: any;
+        const idx = await getCeramicIdx();
+        const profile = await idx!.merge(payload.definition, payload.profile);
+        if (profile) {
+          basicProfile = await idx!.get('basicProfile');
+          tgthr = (await idx?.has('tghtr')) === true ? await idx?.get('tgthr') : null;
+        }
+        return { isAuth: true, basicProfile: basicProfile, tgthrProfile: tgthr, error: null };
+      } catch (err) {
+        return thunkAPI.rejectWithValue(err.message as IDXError);
+      }
+    }
+  }
+);
 
 const idxSlice = createSlice({
   name: 'idx',
@@ -93,6 +120,21 @@ const idxSlice = createSlice({
       })
       .addCase(authorizeIDX.rejected, (state, action) => {
         state.error = action.payload;
+      })
+      .addCase(updateIdxDefintion.pending, (state, action) => {
+        {
+          if (state.loading === 'idle') {
+            state.loading = 'pending';
+          }
+        }
+      })
+      .addCase(updateIdxDefintion.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.isAuth = action.payload.isAuth;
+          state.basicProfile = action.payload.basicProfile;
+          state.tgthrProfile = action.payload.tgthrProfile;
+          state.error = action.payload.error;
+        }
       });
   }
 });

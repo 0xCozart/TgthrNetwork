@@ -55,7 +55,7 @@ async function ipfsUpload(file: any): Promise<string> {
     const res = await await api.pin(file);
     console.log(res.cid.toString());
 
-    return res.cid.toString();
+    return 'https://ipfs.io/ipfs/' + res.cid.toString();
   } catch (error) {
     throw new Error(`Ipfs POST request failed: ${error}`);
   }
