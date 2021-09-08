@@ -8,6 +8,7 @@ import { Router } from 'react-router';
 import { App } from './app';
 import { IDX } from '@ceramicstudio/idx';
 import Ceramic from '@ceramicnetwork/http-client';
+import { grommet, Grommet } from 'grommet';
 
 declare global {
   export interface Window {
@@ -24,7 +25,9 @@ ReactDOM.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <Router history={history}>
-        <App />
+        <Grommet theme={grommet} full>
+          <App />
+        </Grommet>
       </Router>
     </PersistGate>
   </Provider>,

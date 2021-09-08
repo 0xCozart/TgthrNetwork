@@ -7,7 +7,7 @@ import { EthereumAuthProvider, ThreeIdConnect } from '@3id/connect';
 import getEthProvider from 'app/utils/wallet/getEthProvider';
 import { idxWindow } from '../IDXutils';
 
-export async function getCeramicIdx(): Promise<IDX | null> {
+export async function getIdx(): Promise<IDX | null> {
   try {
     // Checks if IDX is already loaded
     const idx = await idxWindow();

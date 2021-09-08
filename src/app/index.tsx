@@ -1,7 +1,7 @@
 import React from 'react';
 import { IDXPage } from 'app/Pages/App';
 import IDXSignUp from 'app/Pages/SignUp';
-import { Header } from 'grommet';
+import Header from 'app/components/Header';
 import { useSelector } from 'react-redux';
 import { RootState } from './redux/rootReducer';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';

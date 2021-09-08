@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getCeramicIdx } from '../../utils/IDX/IDXConnect/IDXConnect';
+import { getIdx } from '../../utils/IDX/idx/getIdx';
 import { IDXState, AuthorizeIDXPayload, IDXError, IDXUpdateProfilePayload } from './idx';
 
 const initialState: IDXState = {
@@ -12,7 +12,7 @@ const initialState: IDXState = {
 
 const authorizeIDX = createAsyncThunk('idx/authorizeIDX', async (payload: AuthorizeIDXPayload, thunkAPI) => {
   try {
-    const idx = await getCeramicIdx();
+    const idx = await getIdx();
     const basicProfile: any = await idx!.get('basicProfile');
     const tgthrProfile: any = (await idx?.has('tghtr')) === true ? await idx?.get('tgthr') : null;
     // const keyChain: any = await idx?.get('3ID Keychain');
@@ -33,7 +33,7 @@ const updateIdxDefintion = createAsyncThunk(
       try {
         let basicProfile: any;
         let tgthr: any;
-        const idx = await getCeramicIdx();
+        const idx = await getIdx();
         const profile = await idx!.merge(payload.definition, payload.profile);
         if (profile) {
           basicProfile = await idx!.get('basicProfile');
@@ -135,10 +135,13 @@ const idxSlice = createSlice({
           state.tgthrProfile = action.payload.tgthrProfile;
           state.error = action.payload.error;
         }
+      })
+      .addCase(updateIdxDefintion.rejected, (state, action) => {
+        state.error = action.payload;
       });
   }
 });
 
-export { authorizeIDX };
+export { authorizeIDX, updateIdxDefintion };
 
 export default idxSlice.reducer;

@@ -30,11 +30,10 @@ export const IDXPage = ({ history, location }: App.Props) => {
   };
 
   return (
-    <Grommet theme={grommet} full>
+    <div>
       <Header />
-      <div>
-        {idx.isAuth ? null : <Landing />}
-        {/* <h1>{idx.basicProfile}</h1>
+      {idx.isAuth ? null : <Landing />}
+      {/* <h1>{idx.basicProfile}</h1>
       <div>PLEASeSAE</div>
       <button onClick={() => dispatch(authorizeIDX({ connect: true }))}> IDX </button>
       <IdxBasicProfileForm onUpload={ipfsUpload} isAuth={true} onRetrieve={onRetrieveBasicProfile} />
@@ -55,7 +54,6 @@ export const IDXPage = ({ history, location }: App.Props) => {
           <div key={key}>{idx[key]}</div>
         ))}
       </div> */}
-      </div>
-    </Grommet>
+    </div>
   );
 };
