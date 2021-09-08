@@ -40,23 +40,13 @@ const NonAuthedHeader = ({ handleOnClick }: UnauthedHeaderProps) => (
 const Header = () => {
   const dispatch: AppDispatch = useDispatch();
   const idx = useSelector((state: RootState) => state.idx);
-  // const history = useHistory();
   const handleOnClick = () => {
     dispatch(authorizeIDX({ connect: true }));
   };
 
-  // if (idx.isAuthorized) {
-  //   return <Redirect to={'/signup'} />;
-  // }
-
   return (
     <GrommetHeader pad="small">
-      {
-        idx.isAuth ? <AuthedHeader idx={idx} /> : <NonAuthedHeader handleOnClick={handleOnClick} />
-        // if (idx.isAuthed && idx.basicProfile === null) {
-        //   return <Redirect to="/signup" />;
-        // }
-      }
+      {idx.isAuth ? <AuthedHeader idx={idx} /> : <NonAuthedHeader handleOnClick={handleOnClick} />}
     </GrommetHeader>
   );
 };

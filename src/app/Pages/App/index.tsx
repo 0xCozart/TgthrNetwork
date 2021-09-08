@@ -5,7 +5,6 @@ import { grommet, Grommet } from 'grommet';
 import { authorizeIDX } from 'app/redux/idx/idxSlice';
 import { RootState } from 'app/redux/rootReducer';
 import { AppDispatch } from 'app/redux/store';
-import IdxBasicProfileForm from 'app/components/Forms/IDXBasicProfileForm';
 import Header from 'app/components/Header/';
 import Landing from 'app/Pages/Landing/Landing';
 

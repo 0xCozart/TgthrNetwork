@@ -15,11 +15,16 @@ const IDXBasicProfile = () => {
   const [image, setImage] = useState<string>(idx.image || '');
   const [background, setBackground] = useState<string>(idx.background || '');
   const handleOnSubmit = () => {
+    console.log({ name, description, image, background });
     dispatch(updateIdxDefintion({ definition: 'basicProfile', profile: { name, description, image, background } }));
   };
 
   return (
-    <Form onSubmit={handleOnSubmit}>
+    <Form
+      onSubmit={() => {
+        handleOnSubmit();
+      }}
+    >
       <FormField name="name" label="Name">
         <TextInput
           //   value={profile.name}
@@ -69,7 +74,7 @@ const IDXBasicProfile = () => {
           }}
         />
       </FormField>
-      <Button onSubmit={handleOnSubmit} primary label="Submit" />
+      <Button primary type="submit" label="Submit" />
     </Form>
   );
 };

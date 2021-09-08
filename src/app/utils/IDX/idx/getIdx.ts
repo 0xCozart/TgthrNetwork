@@ -30,7 +30,7 @@ export async function getIdx(): Promise<IDX | null> {
     const didProvider = await threeIdConnect.getDidProvider();
 
     // Get the ceramic provider (currently this gateway is the only supporter for 3IDs)
-    const ceramicClient = new Ceramic('https://gateway-clay.ceramic.network');
+    const ceramicClient = new Ceramic('https://ceramic-clay.3boxlabs.com');
     //https://gateway-clay.ceramic.network
     // Get the 3id resolver and key resolver and add them to the ceramic provider (will integrate key resolver later)
     const did = new DID({

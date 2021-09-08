@@ -1,14 +1,13 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, connect } from 'react-redux';
 import { RootState } from 'app/redux/rootReducer';
 import { useHistory } from 'react-router-dom';
 import { AppDispatch } from 'app/redux/store';
-import IdxBasicProfileForm from 'app/components/Forms/IDXBasicProfileForm';
-import idxSlice from 'app/redux/idx/idxSlice';
+import { withRouter } from 'react-router-dom';
 
 type Props = {};
 
-export default function Landing(props: Props) {
+function Landing(props: Props) {
   const dispatch: AppDispatch = useDispatch();
   const history = useHistory();
   const onSignIn = () => {
@@ -21,3 +20,5 @@ export default function Landing(props: Props) {
     </div>
   );
 }
+
+export default withRouter(Landing);

@@ -2,6 +2,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'app/redux/rootReducer';
 import IDXBasicProfile from 'app/components/Forms/IDXBasicProfile';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 const IDXSignUp = () => {
   return (
@@ -11,4 +13,4 @@ const IDXSignUp = () => {
   );
 };
 
-export default IDXSignUp;
+export default withRouter(IDXSignUp);

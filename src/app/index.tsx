@@ -1,29 +1,27 @@
 import React from 'react';
-import { IDXPage } from 'app/Pages/App';
 import IDXSignUp from 'app/Pages/SignUp';
 import Header from 'app/components/Header';
-import { useSelector } from 'react-redux';
+import { useSelector, connect } from 'react-redux';
 import { RootState } from './redux/rootReducer';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Landing from './Pages/Landing/Landing';
+import { Redirect } from 'react-router';
 
-export const App = () => {
+const App = () => {
   const idx = useSelector((state: RootState) => state.idx);
-  if (!idx.isAuth) {
-  }
 
   return (
     <Router>
       <Header />
       <Switch>
-        {idx.isAuth ? (
-          <Route path="/signup">
-            <Landing />
-          </Route>
+        {idx.isAuth && idx.basicProfile ? (
+          <Route exact path="/" componenet={Landing} />
         ) : (
-          <Route path="/" component={IDXSignUp} />
+          <Route path="/signup" component={IDXSignUp} />
         )}
       </Switch>
     </Router>
   );
 };
+
+export default App;
