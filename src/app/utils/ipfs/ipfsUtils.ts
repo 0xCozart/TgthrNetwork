@@ -49,7 +49,9 @@ async function ipfsGet(cid: string): Promise<any> {
   }
 }
 
-async function ipfsUpload(file: any): Promise<string> {
+async function ipfsUpload(file: any, type?: 'image'): Promise<string> {
+  if (type === 'image') {
+  }
   try {
     const api = await ipfsApi();
     const res = await api.add(file);

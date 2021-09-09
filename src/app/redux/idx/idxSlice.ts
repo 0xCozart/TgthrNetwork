@@ -35,7 +35,7 @@ const updateIdxDefintion = createAsyncThunk(
         let tgthr: any;
         const idx = await getIdx();
         console.log({ idx });
-        const profile = await idx?.merge(payload.definition, payload.profile);
+        const profile = await idx?.merge(payload.definition, { ...payload.profile });
         if (profile) {
           basicProfile = await idx?.get('basicProfile');
           tgthr = (await idx?.has('tghtr')) === true ? await idx?.get('tgthr') : null;

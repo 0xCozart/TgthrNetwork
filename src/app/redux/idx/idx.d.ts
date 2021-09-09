@@ -21,7 +21,7 @@ export interface AuthorizeIDXActionPayload {
 
 export interface IDXUpdateProfilePayload {
   definition: 'basicProfile' | 'tgthr';
-  profile: IDXBasicProfile | any;
+  profile: IDXBasicProfile;
 }
 
 export interface IDXState {

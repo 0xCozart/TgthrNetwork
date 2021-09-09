@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'app/redux/rootReducer';
 import IDXBasicProfile from 'app/components/Forms/IDXBasicProfile';
 import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
 
 const IDXSignUp = () => {
   return (
