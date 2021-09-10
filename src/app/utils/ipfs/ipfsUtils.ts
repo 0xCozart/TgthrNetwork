@@ -1,5 +1,7 @@
-import ipfsApi from './ipfs';
-import { getImageURL } from '../misc/imagesUtil';
+import type { ImageMetadata, ImageSources } from '@ceramicstudio/idx-constants';
+import { IPFS_PREFIX } from '../constants';
+import ipfsApi from './ipfsApi';
+import { getImageURL } from 'app/utils/misc/imagesUtil';
 
 declare global {
   interface Window {
@@ -49,18 +51,48 @@ async function ipfsGet(cid: string): Promise<any> {
   }
 }
 
-async function ipfsUpload(file: any, type?: 'image'): Promise<string> {
-  if (type === 'image') {
-  }
+async function ipfsUpload(file: Blob): Promise<string> {
   try {
     const api = await ipfsApi();
     const res = await api.add(file);
     console.log(res.cid.toString());
 
-    return 'https://ipfs.io/ipfs/' + res.cid.toString();
+    return res.cid.toString();
   } catch (error) {
     throw new Error(`Ipfs POST request failed: ${error}`);
   }
 }
 
-export { ipfsUpload, ipfsGet, ipfsGetImage };
+async function ipfsUploadImage(file: any): Promise<{ cid: string; metadata: { original: ImageMetadata } }> {
+  try {
+    // let width: number;
+    // let height: number;
+    const img = new Image();
+    img.src = window.URL.createObjectURL(file);
+    img.onload = () => {
+      let width = img.naturalWidth;
+      let height = img.naturalHeight;
+      console.log({ width, height });
+      return { width, height };
+    };
+    // let width = img.naturalWidth;
+    // let height = img.naturalHeight;
+    // console.log({ width, height });
+
+    const cid = await ipfsUpload(file);
+    const mimeType = file.type;
+    const metadata = {
+      original: {
+        src: `${IPFS_PREFIX}` + cid,
+        mimeType,
+        width: 512,
+        height: 512
+      }
+    };
+    return { cid, metadata };
+  } catch (error) {
+    throw new Error(`Ipfs POST request failed: ${error}`);
+  }
+}
+
+export { ipfsUpload, ipfsUploadImage, ipfsGet, ipfsGetImage };
