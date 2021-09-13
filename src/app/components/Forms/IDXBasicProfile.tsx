@@ -1,22 +1,40 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { Button, FileInput, Form, FormField, TextInput } from 'grommet';
 import { useSelector } from 'react-redux';
 import { RootState } from 'app/redux/rootReducer';
-import { IDXBasicProfile } from 'app/redux/idx/idx';
-import { ipfsUpload } from 'app/utils/ipfs/ipfsUtils';
+import { ipfsUploadImage } from 'app/utils/ipfs/ipfsUtils';
 import { useDispatch } from 'react-redux';
-import { updateIdxDefintion } from 'app/redux/idx/idxSlice';
+import { updateIdxBasicProfile } from 'app/redux/idx/idxSlice';
+import { ImageSources } from '@ceramicstudio/idx-constants';
 
 const IDXBasicProfile = () => {
   const dispatch = useDispatch();
   const idx = useSelector((state: RootState) => state.idx);
   const [name, setName] = useState<string>(idx.name || '');
   const [description, setDescription] = useState<string>(idx.description || '');
-  const [image, setImage] = useState<string>(idx.image || '');
-  const [background, setBackground] = useState<string>(idx.background || '');
+  const [image, setImage] = useState<ImageSources>(idx.image);
+  const [background, setBackground] = useState<ImageSources>(idx.background || '');
   const handleOnSubmit = () => {
     console.log({ name, description, image, background });
-    dispatch(updateIdxDefintion({ definition: 'basicProfile', profile: { name, description, image, background } }));
+    dispatch(updateIdxBasicProfile({ definition: 'basicProfile', profile: { name, description, image, background } }));
+  };
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>, type: 'image' | 'background') => {
+    try {
+      const fileList = e.target.files;
+      if (fileList && fileList.length > 0) {
+        const file = fileList[0];
+
+        const { cid, metadata } = await ipfsUploadImage(file);
+        if (type === 'image') {
+          setImage(metadata);
+        }
+        if (type === 'background') {
+          setBackground(metadata);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -44,16 +62,7 @@ const IDXBasicProfile = () => {
         <FileInput
           name="image"
           onChange={async (event) => {
-            try {
-              const fileList = event.target.files;
-              if (fileList && fileList.length > 0) {
-                const file = fileList[0];
-                const ipfsUrl = await ipfsUpload(file);
-                setImage(ipfsUrl);
-              }
-            } catch (e) {
-              console.log(e);
-            }
+            await handleImageUpload(event, 'image');
           }}
         />
       </FormField>
@@ -61,16 +70,7 @@ const IDXBasicProfile = () => {
         <FileInput
           name="background"
           onChange={async (event) => {
-            try {
-              const fileList = event.target.files;
-              if (fileList && fileList.length > 0) {
-                const file = fileList[0];
-                const ipfsUrl = await ipfsUpload(file);
-                setBackground(ipfsUrl);
-              }
-            } catch (e) {
-              console.log(e);
-            }
+            await handleImageUpload(event, 'background');
           }}
         />
       </FormField>

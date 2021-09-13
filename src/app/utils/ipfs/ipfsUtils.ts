@@ -95,4 +95,15 @@ async function ipfsUploadImage(file: any): Promise<{ cid: string; metadata: { or
   }
 }
 
-export { ipfsUpload, ipfsUploadImage, ipfsGet, ipfsGetImage };
+// Returns browser readable ipfs URL from multihash string
+async function getIpfsImageSrc(input: string): Promise<string | null> {
+  const regex = new RegExp(/ipfs:\/\/([a-zA-Z]+(\d[a-zA-Z]+)+)/, 'i');
+  const match = regex.exec(input);
+  console.log(match);
+  if (match) {
+    return await ipfsGetImage(match[1]);
+  }
+  return null;
+}
+
+export { ipfsUpload, ipfsUploadImage, ipfsGet, ipfsGetImage, getIpfsImageSrc };

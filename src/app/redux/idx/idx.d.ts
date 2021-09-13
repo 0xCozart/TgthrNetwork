@@ -1,3 +1,4 @@
+import { ImageSources, BasicProfile } from '@ceramicstudio/idx-constants';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { RootState } from '../rootReducer';
@@ -6,12 +7,12 @@ export interface AuthorizeIDXPayload {
   connect: boolean;
 }
 
-export interface IDXBasicProfile {
-  name: string;
-  description: string;
-  image: string;
-  background: string;
-}
+// export interface IDXBasicProfile {
+//   name: string;
+//   description: string;
+//   image: ImageSources;
+//   background: ImageSources;
+// }
 
 export interface AuthorizeIDXActionPayload {
   connected: boolean;
@@ -19,15 +20,15 @@ export interface AuthorizeIDXActionPayload {
   // tgthr: object | boolean;
 }
 
-export interface IDXUpdateProfilePayload {
-  definition: 'basicProfile' | 'tgthr';
-  profile: IDXBasicProfile;
+export interface IDXUpdateBasicProfilePayload {
+  definition: 'basicProfile';
+  profile: BasicProfile;
 }
 
 export interface IDXState {
   isAuth: boolean;
-  basicProfile: IDXBasicProfile | null;
-  tgthrProfile: object | null;
+  basicProfile: BasicProfile | null;
+  tgthrProfile: any;
   loading: 'idle' | 'pending';
   error: IDXError | null | unknown;
 }

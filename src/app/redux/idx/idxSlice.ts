@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { BasicProfile } from '@ceramicstudio/idx-constants';
 import { getIdx } from '../../utils/IDX/idx/getIdx';
-import { IDXState, AuthorizeIDXPayload, IDXError, IDXUpdateProfilePayload } from './idx';
+import { IDXState, AuthorizeIDXPayload, IDXError, IDXUpdateBasicProfilePayload } from './idx';
 
 const initialState: IDXState = {
   isAuth: false,
@@ -13,22 +14,22 @@ const initialState: IDXState = {
 const authorizeIDX = createAsyncThunk('idx/authorizeIDX', async (payload: AuthorizeIDXPayload, thunkAPI) => {
   try {
     const idx = await getIdx();
-    const basicProfile: any = await idx?.get('basicProfile');
-    const tgthrProfile: any = (await idx?.has('tghtr')) === true ? await idx?.get('tgthr') : null;
+    const basicProfile: BasicProfile | null | undefined = await idx?.get('basicProfile');
+    const tgthrProfile = (await idx?.has('tghtr')) === true ? await idx?.get('tgthr') : null;
     // const keyChain: any = await idx?.get('3ID Keychain');
     // const tgthrProfile: any = null;
 
     console.log({ idx, basicProfile });
 
     return { isAuth: true, basicProfile, tgthrProfile, error: null };
-  } catch (err) {
+  } catch (err: any) {
     return thunkAPI.rejectWithValue(err.message as IDXError);
   }
 });
 
-const updateIdxDefintion = createAsyncThunk(
-  'idx/updateIdxDefinition',
-  async (payload: IDXUpdateProfilePayload, thunkAPI) => {
+const updateIdxBasicProfile = createAsyncThunk(
+  'idx/updateIdxBasicProfile',
+  async (payload: IDXUpdateBasicProfilePayload, thunkAPI) => {
     {
       try {
         let basicProfile: any;
@@ -41,7 +42,7 @@ const updateIdxDefintion = createAsyncThunk(
           tgthr = (await idx?.has('tghtr')) === true ? await idx?.get('tgthr') : null;
         }
         return { isAuth: true, basicProfile: basicProfile, tgthrProfile: tgthr, error: null };
-      } catch (err) {
+      } catch (err: any) {
         return thunkAPI.rejectWithValue(err.message as IDXError);
       }
     }
@@ -64,7 +65,7 @@ const idxSlice = createSlice({
         /* for some reason tgthrProfile isnt present in next store state */
         if (action.payload) {
           state.isAuth = action.payload.isAuth;
-          state.basicProfile = action.payload.basicProfile;
+          state.basicProfile = action.payload.basicProfile ? action.payload.basicProfile : null;
           state.tgthrProfile = action.payload.tgthrProfile;
           state.error = action.payload.error;
         }
@@ -72,14 +73,14 @@ const idxSlice = createSlice({
       .addCase(authorizeIDX.rejected, (state, action) => {
         state.error = action.payload;
       })
-      .addCase(updateIdxDefintion.pending, (state, action) => {
+      .addCase(updateIdxBasicProfile.pending, (state, action) => {
         {
           if (state.loading === 'idle') {
             state.loading = 'pending';
           }
         }
       })
-      .addCase(updateIdxDefintion.fulfilled, (state, action) => {
+      .addCase(updateIdxBasicProfile.fulfilled, (state, action) => {
         if (action.payload) {
           state.isAuth = action.payload.isAuth;
           state.basicProfile = action.payload.basicProfile;
@@ -87,12 +88,12 @@ const idxSlice = createSlice({
           state.error = action.payload.error;
         }
       })
-      .addCase(updateIdxDefintion.rejected, (state, action) => {
+      .addCase(updateIdxBasicProfile.rejected, (state, action) => {
         state.error = action.payload;
       });
   }
 });
 
-export { authorizeIDX, updateIdxDefintion };
+export { authorizeIDX, updateIdxBasicProfile };
 
 export default idxSlice.reducer;
