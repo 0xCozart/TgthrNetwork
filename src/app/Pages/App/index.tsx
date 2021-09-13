@@ -12,47 +12,12 @@ export namespace App {
   export interface Props extends RouteComponentProps<void> {}
 }
 
-export const IDXPage = ({ history, location }: App.Props) => {
-  const [testImage, setTestImage] = useState<string>('');
-  const idx = useSelector((state: RootState) => state.idx);
-  const dispatch: AppDispatch = useDispatch();
-
-  useEffect(() => {
-    (async () => {
-      // let file = await ipfsUpload();
-      // console.log(file);
-    })();
-  });
-
-  const onRetrieveBasicProfile = (basicProfile: typeof idx.basicProfile) => {
-    dispatch({ type: 'UPDATE_BASIC_PROFILE', basicProfile });
-  };
-
+const App = ({ history, location }: App.Props) => {
   return (
     <div>
       <Header />
-      {idx.isAuth ? null : <Landing />}
-      {/* <h1>{idx.basicProfile}</h1>
-      <div>PLEASeSAE</div>
-      <button onClick={() => dispatch(authorizeIDX({ connect: true }))}> IDX </button>
-      <IdxBasicProfileForm onUpload={ipfsUpload} isAuth={true} onRetrieve={onRetrieveBasicProfile} />
-      <button
-        onClick={async () => {
-          const image = await ipfsGetImage('QmWWtSEjs3RUgMHtmwrTz3Cv7SBF9VXmmhFUVrX4Xdd68y');
-          if (image) setTestImage(image);
-          console.log({ image });
-        }}
-      >
-        IDX
-      </button>
-      <div>
-        <img src={testImage} style={{ height: '100%', width: '100%' }}></img>
-      </div>
-      <div>
-        {Object.keys(idx).map((key) => (
-          <div key={key}>{idx[key]}</div>
-        ))}
-      </div> */}
     </div>
   );
 };
+
+export default App;

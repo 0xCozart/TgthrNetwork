@@ -19,7 +19,7 @@ interface AuthedHeaderProps {
 
 const AuthedHeader = ({ idx, avatarURL }: AuthedHeaderProps) => (
   <>
-    <Avatar src={avatarURL} />
+    <Avatar src={avatarURL} size="large" />
     <Nav direction="row">
       <Button label="signedin" />
     </Nav>
@@ -39,9 +39,8 @@ const Header = () => {
   const [avatar, setAvatar] = React.useState('');
   const dispatch: AppDispatch = useDispatch();
   const idx: IDXState = useSelector((state: RootState) => state.idx);
-  const handleOnClick = () => {
-    dispatch(authorizeIDX({ connect: true }));
-  };
+  const history = useHistory();
+
   useEffect(() => {
     (async () => {
       if (idx.isAuth && idx.basicProfile?.image?.original.src) {
@@ -49,13 +48,21 @@ const Header = () => {
         const avatarUrl = url ? url : '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80';
         console.log(url, avatarUrl);
         setAvatar(avatarUrl);
+        history.push('/');
       }
+      if (!idx.isAuth) {
+        history.push('/signup');
+      }
+
       return () => {
         setAvatar('');
       };
     })();
   }, [idx.isAuth, idx.basicProfile]);
 
+  const handleOnClick = () => {
+    dispatch(authorizeIDX({ connect: true }));
+  };
   return (
     <GrommetHeader pad="small">
       {idx.isAuth ? <AuthedHeader idx={idx} avatarURL={avatar} /> : <NonAuthedHeader handleOnClick={handleOnClick} />}
