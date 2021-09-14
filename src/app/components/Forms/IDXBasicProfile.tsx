@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Button, FileInput, Form, FormField, TextInput } from 'grommet';
-import { useSelector } from 'react-redux';
+import { ImageSources } from '@ceramicstudio/idx-constants';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'app/redux/rootReducer';
 import { ipfsUploadImage } from 'app/utils/ipfs/ipfsUtils';
-import { useDispatch } from 'react-redux';
-import { updateIdxBasicProfile } from 'app/redux/idx/idxSlice';
-import { ImageSources } from '@ceramicstudio/idx-constants';
+import { updateIdx } from 'app/redux/idx/idxSlice';
+import { BoxForm } from '../Boxs/index';
 
 const IDXBasicProfile = () => {
   const dispatch = useDispatch();
@@ -14,10 +14,12 @@ const IDXBasicProfile = () => {
   const [description, setDescription] = useState<string>(idx.description || '');
   const [image, setImage] = useState<ImageSources>(idx.image);
   const [background, setBackground] = useState<ImageSources>(idx.background || '');
+
   const handleOnSubmit = () => {
     console.log({ name, description, image, background });
-    dispatch(updateIdxBasicProfile({ definition: 'basicProfile', profile: { name, description, image, background } }));
+    dispatch(updateIdx({ definition: 'basicProfile', data: { name, description, image, background } }));
   };
+
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>, type: 'image' | 'background') => {
     try {
       const fileList = e.target.files;
@@ -43,38 +45,40 @@ const IDXBasicProfile = () => {
         handleOnSubmit();
       }}
     >
-      <FormField name="name" label="Name">
-        <TextInput
-          //   value={profile.name}
-          onChange={(event) => {
-            setName(event.target.value);
-          }}
-        />
-      </FormField>
-      <FormField name="description" label="Description">
-        <TextInput
-          onChange={(event) => {
-            setDescription(event.target.value);
-          }}
-        />
-      </FormField>
-      <FormField name="image" label="Avatar">
-        <FileInput
-          name="image"
-          onChange={async (event) => {
-            await handleImageUpload(event, 'image');
-          }}
-        />
-      </FormField>
-      <FormField name="background" label="Background">
-        <FileInput
-          name="background"
-          onChange={async (event) => {
-            await handleImageUpload(event, 'background');
-          }}
-        />
-      </FormField>
-      <Button primary type="submit" label="Submit" />
+      <BoxForm style={{ width: '100%', height: '100%' }}>
+        <FormField name="name" label="Name">
+          <TextInput
+            //   value={profile.name}
+            onChange={(event) => {
+              setName(event.target.value);
+            }}
+          />
+        </FormField>
+        <FormField name="description" label="Description">
+          <TextInput
+            onChange={(event) => {
+              setDescription(event.target.value);
+            }}
+          />
+        </FormField>
+        <FormField name="image" label="Avatar">
+          <FileInput
+            name="image"
+            onChange={async (event) => {
+              await handleImageUpload(event, 'image');
+            }}
+          />
+        </FormField>
+        <FormField name="background" label="Background">
+          <FileInput
+            name="background"
+            onChange={async (event) => {
+              await handleImageUpload(event, 'background');
+            }}
+          />
+        </FormField>
+        <Button primary type="submit" label="Submit" />
+      </BoxForm>
     </Form>
   );
 };

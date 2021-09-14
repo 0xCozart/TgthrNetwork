@@ -20,15 +20,17 @@ export interface AuthorizeIDXActionPayload {
   // tgthr: object | boolean;
 }
 
-export interface IDXUpdateBasicProfilePayload {
-  definition: 'basicProfile';
-  profile: BasicProfile;
+export interface UpdateIDX {
+  definition: 'basicProfile' | 'tgthr';
+  data: BasicProfile | any;
 }
 
 export interface IDXState {
   isAuth: boolean;
   basicProfile: BasicProfile | null;
-  tgthrProfile: any;
+  tgthr: any;
+  avatarUrl: string | null;
+  backgroundUrl: string | null;
   loading: 'idle' | 'pending';
   error: IDXError | null | unknown;
 }

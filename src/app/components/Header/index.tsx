@@ -6,8 +6,6 @@ import { RootState } from 'app/redux/rootReducer';
 import { useHistory } from 'react-router-dom';
 import { AppDispatch } from 'app/redux/store';
 import idxSlice, { authorizeIDX } from 'app/redux/idx/idxSlice';
-import { Redirect } from 'react-router';
-import { setLocal } from 'web3modal';
 import { IDXState } from 'app/redux/idx/idx';
 
 export namespace Header {}
@@ -63,6 +61,7 @@ const Header = () => {
   const handleOnClick = () => {
     dispatch(authorizeIDX({ connect: true }));
   };
+
   return (
     <GrommetHeader pad="small">
       {idx.isAuth ? <AuthedHeader idx={idx} avatarURL={avatar} /> : <NonAuthedHeader handleOnClick={handleOnClick} />}
