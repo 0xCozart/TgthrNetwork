@@ -22,10 +22,10 @@ const authorizeIDX = createAsyncThunk('idx/authorizeIDX', async (payload: Author
     const tgthr = (await idx?.has('tghtr')) === true ? await idx?.get('tgthr') : null;
     // const keyChain: any = await idx?.get('3ID Keychain');
     // const tgthrProfile: any = null;
-    const avatarUrl = basicProfile?.image ? await getIpfsImageSrc(basicProfile?.image?.original.src) : '';
-    const backgroundUrl = basicProfile?.background ? await getIpfsImageSrc(basicProfile.background?.original?.src) : '';
-
-    console.log({ idx, basicProfile });
+    const avatarUrl = basicProfile?.image?.original.src ? await getIpfsImageSrc(basicProfile?.image?.original.src) : '';
+    const backgroundUrl = basicProfile?.background?.original.src
+      ? await getIpfsImageSrc(basicProfile.background?.original?.src)
+      : '';
 
     return { isAuth: true, basicProfile, tgthr, avatarUrl, backgroundUrl, error: null };
   } catch (err: any) {
@@ -38,6 +38,8 @@ const updateIdx = createAsyncThunk('idx/updateIdxBasicProfile', async (payload: 
     try {
       let basicProfile: any;
       let tgthr: any;
+      let avatarUrl: any;
+      let backgroundUrl: any;
       const idx = await getIdx();
       console.log({ idx });
       const filteredPayload = await filterFalsyValuesFromObject(payload.data);
@@ -45,15 +47,14 @@ const updateIdx = createAsyncThunk('idx/updateIdxBasicProfile', async (payload: 
       if (profile) {
         basicProfile = await idx?.get(payload.definition);
         tgthr = (await idx?.has('tghtr')) === true ? await idx?.get('tgthr') : null;
+        avatarUrl = basicProfile?.image ? await getIpfsImageSrc(basicProfile?.image?.original.src) : '';
+        backgroundUrl = basicProfile?.background ? await getIpfsImageSrc(basicProfile.background?.original?.src) : '';
       } else {
         basicProfile = null;
         tgthr = null;
+        avatarUrl = '';
+        backgroundUrl = '';
       }
-
-      const avatarUrl = basicProfile?.image ? await getIpfsImageSrc(basicProfile?.image?.original.src) : '';
-      const backgroundUrl = basicProfile?.background
-        ? await getIpfsImageSrc(basicProfile.background?.original?.src)
-        : '';
 
       return {
         isAuth: true,
@@ -87,6 +88,8 @@ const idxSlice = createSlice({
           state.isAuth = action.payload.isAuth;
           state.basicProfile = action.payload.basicProfile ? action.payload.basicProfile : null;
           state.tgthr = action.payload.tgthr;
+          state.avatarUrl = action.payload.avatarUrl;
+          state.backgroundUrl = action.payload.backgroundUrl;
           state.error = action.payload.error;
           state.loading = 'idle';
         }
@@ -106,6 +109,8 @@ const idxSlice = createSlice({
           state.isAuth = action.payload.isAuth;
           state.basicProfile = action.payload.basicProfile;
           state.tgthr = action.payload.tgthr;
+          state.avatarUrl = action.payload.avatarUrl;
+          state.backgroundUrl = action.payload.backgroundUrl;
           state.error = action.payload.error;
           state.loading = 'idle';
         }

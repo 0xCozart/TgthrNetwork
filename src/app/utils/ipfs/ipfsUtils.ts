@@ -1,7 +1,7 @@
-import type { ImageMetadata, ImageSources } from '@ceramicstudio/idx-constants';
+import type { ImageMetadata } from '@ceramicstudio/idx-constants';
+import { getImageURL } from 'app/utils/misc/imagesUtil';
 import { IPFS_PREFIX } from '../constants';
 import ipfsApi from './ipfsApi';
-import { getImageURL } from 'app/utils/misc/imagesUtil';
 
 declare global {
   interface Window {
@@ -34,14 +34,12 @@ async function ipfsGet(cid: string): Promise<any> {
     const files = await api.get(cid);
 
     for await (const file of files) {
-      console.log(file.type, file.path);
       if (!file.content) continue;
 
       const content = [];
       for await (const chunk of file.content) {
         content.push(chunk);
       }
-      console.log(content.toString());
       return content;
     }
 
@@ -55,7 +53,6 @@ async function ipfsUpload(file: Blob): Promise<string> {
   try {
     const api = await ipfsApi();
     const res = await api.add(file);
-    console.log(res.cid.toString());
 
     return res.cid.toString();
   } catch (error) {
@@ -72,7 +69,6 @@ async function ipfsUploadImage(file: any): Promise<{ cid: string; metadata: { or
     img.onload = () => {
       let width = img.naturalWidth;
       let height = img.naturalHeight;
-      console.log({ width, height });
       return { width, height };
     };
     // let width = img.naturalWidth;
@@ -99,7 +95,6 @@ async function ipfsUploadImage(file: any): Promise<{ cid: string; metadata: { or
 async function getIpfsImageSrc(input: string): Promise<string | null> {
   const regex = new RegExp(/ipfs:\/\/([a-zA-Z]+(\d[a-zA-Z]+)+)/, 'i');
   const match = regex.exec(input);
-  console.log(match);
   if (match) {
     return await ipfsGetImage(match[1]);
   }
