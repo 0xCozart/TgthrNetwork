@@ -1,4 +1,4 @@
-import { ImageSources, BasicProfile } from '@ceramicstudio/idx-constants';
+import { BasicProfile } from '@ceramicstudio/idx-constants';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { RootState } from '../rootReducer';

@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BasicProfile } from '@ceramicstudio/idx-constants';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getIdx } from 'app/utils/IDX/idx/getIdx';
-import { IDXState, AuthorizeIDXPayload, IDXError, UpdateIDX } from './idx';
-import { filterFalsyValuesFromObject } from 'app/utils/misc';
 import { getIpfsImageSrc } from 'app/utils/ipfs/ipfsUtils';
+import { filterFalsyValuesFromObject } from 'app/utils/misc';
+import { AuthorizeIDXPayload, IDXError, IDXState, UpdateIDX } from './idx';
 
 const initialState: IDXState = {
   isAuth: false,
@@ -41,7 +41,7 @@ const updateIdx = createAsyncThunk('idx/updateIdxBasicProfile', async (payload: 
       const idx = await getIdx();
       console.log({ idx });
       const filteredPayload = await filterFalsyValuesFromObject(payload.data);
-      const profile = await idx?.set(payload.definition, { ...filteredPayload });
+      const profile = await idx?.merge(payload.definition, { ...filteredPayload });
       if (profile) {
         basicProfile = await idx?.get(payload.definition);
         tgthr = (await idx?.has('tghtr')) === true ? await idx?.get('tgthr') : null;
@@ -49,10 +49,12 @@ const updateIdx = createAsyncThunk('idx/updateIdxBasicProfile', async (payload: 
         basicProfile = null;
         tgthr = null;
       }
+
       const avatarUrl = basicProfile?.image ? await getIpfsImageSrc(basicProfile?.image?.original.src) : '';
       const backgroundUrl = basicProfile?.background
         ? await getIpfsImageSrc(basicProfile.background?.original?.src)
         : '';
+
       return {
         isAuth: true,
         basicProfile,

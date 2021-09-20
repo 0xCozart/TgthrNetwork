@@ -8,7 +8,8 @@ import { Router } from 'react-router';
 import App from './app';
 import { IDX } from '@ceramicstudio/idx';
 import Ceramic from '@ceramicnetwork/http-client';
-import { grommet, Grommet } from 'grommet';
+import { Grommet } from 'grommet';
+import { grommet } from 'grommet/themes';
 
 declare global {
   export interface Window {

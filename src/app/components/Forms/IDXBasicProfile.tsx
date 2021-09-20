@@ -1,10 +1,10 @@
-import React, { ChangeEvent, useState } from 'react';
-import { Button, FileInput, Form, FormField, TextInput } from 'grommet';
 import { ImageSources } from '@ceramicstudio/idx-constants';
-import { useSelector, useDispatch } from 'react-redux';
+import { updateIdx } from 'app/redux/idx/idxSlice';
 import { RootState } from 'app/redux/rootReducer';
 import { ipfsUploadImage } from 'app/utils/ipfs/ipfsUtils';
-import { updateIdx } from 'app/redux/idx/idxSlice';
+import { Button, FileInput, Form, FormField, TextInput } from 'grommet';
+import React, { ChangeEvent, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { BoxForm } from '../Boxs/index';
 
 const IDXBasicProfile = () => {
@@ -45,7 +45,7 @@ const IDXBasicProfile = () => {
         handleOnSubmit();
       }}
     >
-      <BoxForm style={{ width: '100%', height: '100%' }}>
+      <BoxForm style={{ width: '30%', height: '40%' }}>
         <FormField name="name" label="Name">
           <TextInput
             //   value={profile.name}
