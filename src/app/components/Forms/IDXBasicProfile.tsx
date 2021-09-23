@@ -10,10 +10,12 @@ import { BoxForm } from '../Boxs/index';
 const IDXBasicProfile = () => {
   const dispatch = useDispatch();
   const idx = useSelector((state: RootState) => state.idx);
-  const [name, setName] = useState<string>(idx.name || '');
-  const [description, setDescription] = useState<string>(idx.description || '');
-  const [image, setImage] = useState<ImageSources>(idx.image);
-  const [background, setBackground] = useState<ImageSources>(idx.background || '');
+  const [name, setName] = useState<string>(idx.basicProfile?.name || '');
+  const [description, setDescription] = useState<string>(idx.basicProfile?.description || '');
+  const [image, setImage] = useState<ImageSources | null>(idx.basicProfile?.image ? idx.basicProfile?.image : null);
+  const [background, setBackground] = useState<ImageSources | null>(
+    idx.basicProfile?.background ? idx.basicProfile?.background : null
+  );
 
   const handleOnSubmit = () => {
     console.log({ name, description, image, background });

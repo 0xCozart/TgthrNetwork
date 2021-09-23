@@ -44,7 +44,6 @@ const Header = () => {
       if (idx.isAuth && idx.basicProfile?.image?.original.src) {
         const url = await getIpfsImageSrc(idx.basicProfile.image.original.src);
         const avatarUrl = url ? url : '//s.gravatar.com/avatar/b7fb138d53ba0f573212ccce38a7c43b?s=80';
-        console.log({ url, avatarUrl });
         setAvatarUrl(avatarUrl);
         history.push('/');
       }
