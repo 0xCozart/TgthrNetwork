@@ -1,19 +1,16 @@
-import { MatrixLogin } from 'app/utils/matrix/types';
 import * as sdk from 'matrix-js-sdk';
 
 // baseUrl to be used in prod -> https://matrix.org
-function getMatrixClient(baseUrl = 'http://localhost:8008') {
-  return new Promise((resolve, reject) => {
-    const matric = sdk.createClient({ baseUrl });
-    if (matric) {
-      resolve(matric);
-    } else {
-      reject('matrix client not created');
-    }
-  });
+async function getMatrixClient(baseUrl = 'https://matrix.org') {
+  try {
+    return await sdk.createClient(baseUrl);
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 }
 
-function loginToMatrix(matrix: sdk.MatrixClient, { username, password }: MatrixLogin) {
+function loginToMatrix(matrix: sdk.MatrixClient, username: string, password: string) {
   return new Promise((resolve, reject) => {
     matrix
       .loginWithPassword(username, password, (err, data) => {
@@ -34,23 +31,36 @@ function createSessionId() {
   return '_' + Math.random().toString(36).substr(2, 9);
 }
 
-async function getGuestMatrixClient(baseUrl = 'http://localhost:8008') {
-  const tmpClient = await sdk.createClient({ baseUrl });
-  const { user_id, device_id, access_token } = await tmpClient.registerGuest({ body: {} });
-  return { user_id, device_id, access_token };
+async function getGuestMatrixClient(baseUrl = 'https://matrix.org') {
+  try {
+    const tmpClient = await sdk.createClient({ baseUrl });
+    const { user_id, device_id, access_token } = await tmpClient.registerGuest({ body: {} });
+    console.log({ user_id, device_id, access_token });
+    return { user_id, device_id, access_token };
+  } catch (err) {
+    console.log({ err });
+    return null;
+  }
 }
 
-async function registerToMatrix(matrix: sdk.MatrixClient, { username, password }: MatrixLogin) {
+async function registerToMatrix(matrix: sdk.MatrixClient, username: string, password: string) {
   let output = {};
-  const { user_id, device_id, access_token } = await getGuestMatrixClient();
-  const sessionId = createSessionId();
-  await matrix.register(username, password, sessionId, {}, null, access_token, false, (err, data) => {
-    if (err) {
-      output = { err };
-    } else {
-      output = { data };
+  try {
+    const guestData = await getGuestMatrixClient();
+    const sessionId = createSessionId();
+    if (guestData) {
+      await matrix.register(username, password, sessionId, {}, null, guestData.access_token, false, (err, data) => {
+        if (err) {
+          output = { err };
+        } else {
+          output = { data };
+        }
+      });
     }
-  });
+  } catch (err) {
+    output = { err };
+    console.log({ err });
+  }
 
   return output;
 }
